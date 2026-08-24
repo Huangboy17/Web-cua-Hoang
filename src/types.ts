@@ -1,16 +1,25 @@
 export interface ProjectApp {
   id: string;
   title: string;
+  slug?: string;
   tagline: string;
   description: string;
+  fullDescription?: string;
+  problem?: string;
+  solution?: string;
+  role: string;
+  impact?: string;
+  whatILearned?: string;
   liveUrl: string;
   githubUrl?: string;
   category: 'Fullstack' | 'SaaS' | 'AI & Tech' | 'E-commerce' | 'Tools';
   tags: string[];
   featured: boolean;
+  published?: boolean; // Draft / Published status (default: true)
+  displayOrder?: number;
   image: string;
+  gallery?: string[];
   metrics?: string;
-  role: string;
   challenges?: string[];
   keyFeatures: string[];
   demoAccount?: {
@@ -26,12 +35,18 @@ export interface WorkExperience {
   company: string;
   role: string;
   period: string;
+  startDate?: string;
+  endDate?: string;
   location: string;
   type: 'Full-time' | 'Part-time' | 'Freelance' | 'Remote';
   summary: string;
+  responsibilities?: string[];
   achievements: string[];
   technologies: string[];
   companyUrl?: string;
+  logo?: string;
+  displayOrder?: number;
+  published?: boolean; // Draft / Published status (default: true)
 }
 
 export interface EducationItem {
@@ -71,11 +86,23 @@ export interface AwardItem {
   description?: string;
 }
 
+export interface ContactMessage {
+  id: string;
+  name: string;
+  email: string;
+  company?: string;
+  roleTitle?: string;
+  message: string;
+  createdAt: string;
+  status: 'unread' | 'read' | 'archived';
+}
+
 export interface UserProfile {
   fullName: string;
   title: string;
   headline: string;
   bio: string;
+  aboutSummary?: string;
   avatarUrl: string;
   email: string;
   phone: string;
@@ -84,12 +111,17 @@ export interface UserProfile {
   availableForHire: boolean;
   yearsOfExperience: number;
   completedProjectsCount: number;
+  ctaText?: string;
+  ctaLink?: string;
+  seoTitle?: string;
+  seoDescription?: string;
   socialLinks: {
     github?: string;
     linkedin?: string;
     facebook?: string;
     telegram?: string;
     website?: string;
+    youtube?: string;
   };
   cvDownloadUrl?: string;
   projects: ProjectApp[];

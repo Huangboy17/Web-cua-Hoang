@@ -18,12 +18,14 @@ interface ProjectShowcaseProps {
   projects: ProjectApp[];
   darkMode: boolean;
   onOpenEditor: () => void;
+  isAdmin?: boolean;
 }
 
 export const ProjectShowcase: React.FC<ProjectShowcaseProps> = ({
   projects,
   darkMode,
-  onOpenEditor
+  onOpenEditor,
+  isAdmin = false
 }) => {
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -35,6 +37,9 @@ export const ProjectShowcase: React.FC<ProjectShowcaseProps> = ({
   const filteredProjects = useMemo(() => {
     const q = (searchQuery || '').trim().toLowerCase();
     return (projects || []).filter((proj) => {
+      // If not admin, only show published projects
+      if (!isAdmin && proj.published === false) return false;
+
       const matchCategory = selectedCategory === 'All' || proj.category === selectedCategory;
       if (!matchCategory) return false;
       if (!q) return true;
@@ -44,7 +49,7 @@ export const ProjectShowcase: React.FC<ProjectShowcaseProps> = ({
       const tagsMatch = Array.isArray(proj.tags) && proj.tags.some(t => (t || '').toLowerCase().includes(q));
       return titleMatch || descMatch || taglineMatch || tagsMatch;
     });
-  }, [projects, selectedCategory, searchQuery]);
+  }, [projects, selectedCategory, searchQuery, isAdmin]);
 
   const handleCopyUrl = (e: React.MouseEvent, url: string, id: string) => {
     e.stopPropagation();
@@ -206,6 +211,12 @@ export const ProjectShowcase: React.FC<ProjectShowcaseProps> = ({
 
                   {/* Live Web App Badge & Copy Link */}
                   <div className="flex items-center gap-2">
+                    {project.published === false && (
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-500/20 text-amber-300 border border-amber-500/40">
+                        Bản nháp
+                      </span>
+                    )}
+
                     <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border ${
                       darkMode ? 'bg-[#7C3AED]/15 text-[#A78BFA] border-[#7C3AED]/40' : 'bg-purple-50 text-[#7C3AED] border-purple-200'
                     }`}>

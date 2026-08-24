@@ -9,9 +9,12 @@ import {
   MessageSquare, 
   Sparkles,
   Building,
-  Briefcase
+  Briefcase,
+  Loader2,
+  Check
 } from 'lucide-react';
 import { UserProfile } from '../types';
+import { submitContactMessage } from '../firebase';
 
 interface ContactSectionProps {
   profile: UserProfile;
@@ -27,7 +30,9 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ profile, darkMod
     roleTitle: '',
     message: ''
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [savedToCloud, setSavedToCloud] = useState(false);
 
   const handleCopy = (text: string, field: string) => {
     navigator.clipboard.writeText(text);
@@ -35,9 +40,25 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ profile, darkMod
     setTimeout(() => setCopiedField(null), 2000);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Generate mailto link
+    setIsSubmitting(true);
+
+    try {
+      // 1. Submit message directly to Google Cloud Firestore
+      await submitContactMessage({
+        name: formData.recruiterName,
+        email: formData.email,
+        company: formData.company,
+        roleTitle: formData.roleTitle,
+        message: formData.message,
+      });
+      setSavedToCloud(true);
+    } catch (err) {
+      console.warn('Firestore contact message submission note:', err);
+    }
+
+    // 2. Open mail client as backup
     const subject = encodeURIComponent(`[Liên Hệ] Trao đổi công việc ${formData.roleTitle ? `- Vị trí/Dự án: ${formData.roleTitle}` : ''} từ ${formData.company || 'Đối tác'}`);
     const body = encodeURIComponent(
       `Chào ${profile.fullName},\n\nTôi là ${formData.recruiterName} đại diện từ ${formData.company}.\n` +
@@ -46,8 +67,13 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ profile, darkMod
       `Nội dung tin nhắn:\n${formData.message}\n\n` +
       `Rất mong sớm nhận được phản hồi từ bạn.`
     );
-    window.open(`mailto:${profile.email}?subject=${subject}&body=${body}`, '_blank');
-    setSubmitted(true);
+    
+    // Slight timeout so UI feedback is instant
+    setTimeout(() => {
+      window.open(`mailto:${profile.email}?subject=${subject}&body=${body}`, '_blank');
+      setIsSubmitting(false);
+      setSubmitted(true);
+    }, 400);
   };
 
   return (
@@ -187,16 +213,21 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ profile, darkMod
             }`}>
               <h3 className={`text-xl font-bold mb-2 flex items-center gap-2 ${darkMode ? 'text-[#F8FAFC]' : 'text-[#0F172A]'}`}>
                 <MessageSquare className="w-5 h-5 text-[#A78BFA]" />
-                <span>Gửi Lời Nhắn Nhanh</span>
+                <span>Gửi Lời Nhắn Trực Tiếp</span>
               </h3>
               <p className={`text-xs sm:text-sm mb-6 ${darkMode ? 'text-[#94A3B8]' : 'text-[#64748B]'}`}>
-                Điền thông tin bên dưới, hệ thống sẽ tự động tạo thư gửi trực tiếp đến tôi.
+                Lời nhắn của bạn sẽ được lưu trực tiếp vào hộp thư Google Cloud và gửi email thông báo tới Bùi Việt Hoàng.
               </p>
 
               {submitted && (
-                <div className="p-4 mb-6 rounded-2xl bg-[#7C3AED]/15 border border-[#7C3AED]/30 text-[#A78BFA] text-xs sm:text-sm flex items-center gap-2">
-                  <CheckCircle2 className="w-5 h-5 shrink-0 text-emerald-400" />
-                  <span>Đã mở trình duyệt soạn thư! Cảm ơn bạn đã liên hệ.</span>
+                <div className="p-4 mb-6 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs sm:text-sm flex items-start gap-2.5 animate-fadeIn">
+                  <CheckCircle2 className="w-5 h-5 shrink-0 text-emerald-400 mt-0.5" />
+                  <div>
+                    <p className="font-semibold text-emerald-400">Đã gửi tin nhắn thành công!</p>
+                    <p className="text-xs opacity-90 mt-0.5">
+                      Cảm ơn bạn đã để lại thông tin liên hệ. Tôi sẽ phản hồi lại bạn trong thời gian sớm nhất.
+                    </p>
+                  </div>
                 </div>
               )}
 
@@ -296,10 +327,20 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ profile, darkMod
                 <button
                   id="btn-submit-contact"
                   type="submit"
-                  className="w-full py-3.5 px-6 rounded-full font-semibold text-xs uppercase tracking-wider text-white bg-gradient-to-r from-[#7C3AED] via-[#6366F1] to-[#2563EB] hover:from-[#6D28D9] hover:to-[#1D4ED8] shadow-lg shadow-purple-500/25 transition-all flex items-center justify-center gap-2 hover:scale-[1.01]"
+                  disabled={isSubmitting}
+                  className="w-full py-3.5 px-6 rounded-full font-semibold text-xs uppercase tracking-wider text-white bg-gradient-to-r from-[#7C3AED] via-[#6366F1] to-[#2563EB] hover:from-[#6D28D9] hover:to-[#1D4ED8] shadow-lg shadow-purple-500/25 transition-all flex items-center justify-center gap-2 hover:scale-[1.01] disabled:opacity-50"
                 >
-                  <Send className="w-4 h-4" />
-                  <span>Gửi Lời Nhắn Đến {profile.fullName}</span>
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span>Đang Gửi Lời Nhắn...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Send className="w-4 h-4" />
+                      <span>Gửi Lời Nhắn Đến {profile.fullName}</span>
+                    </>
+                  )}
                 </button>
               </form>
             </div>

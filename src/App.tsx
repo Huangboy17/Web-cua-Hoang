@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { User } from 'firebase/auth';
 import { UserProfile } from './types';
 import { DEFAULT_PROFILE } from './data/defaultData';
 import { Navbar } from './components/Navbar';
@@ -8,9 +9,30 @@ import { ExperienceSection } from './components/ExperienceSection';
 import { SkillsSection } from './components/SkillsSection';
 import { ContactSection } from './components/ContactSection';
 import { ProfileEditorModal } from './components/ProfileEditorModal';
+import { AdminAuthModal } from './components/AdminAuthModal';
+import { AdminCMSDashboard } from './components/AdminCMSDashboard';
 import { Footer } from './components/Footer';
-import { Layers, Send, Mail, CheckCircle2, Cloud, Check } from 'lucide-react';
-import { saveProfileToCloud, fetchProfileFromCloud, subscribeToCloudProfile } from './firebase';
+import { 
+  Layers, 
+  Send, 
+  Mail, 
+  CheckCircle2, 
+  Cloud, 
+  Check, 
+  ShieldCheck, 
+  Sliders, 
+  LogOut, 
+  ExternalLink 
+} from 'lucide-react';
+import { 
+  auth, 
+  onAuthStateChanged, 
+  isUserAdmin, 
+  logoutAdmin, 
+  saveProfileToCloud, 
+  fetchProfileFromCloud, 
+  subscribeToCloudProfile 
+} from './firebase';
 
 const STORAGE_KEY = 'HOANG_KTXD_PORTFOLIO_PROFILE_DATA_V2';
 const THEME_KEY = 'HOANG_PORTFOLIO_THEME_DARK';
@@ -37,13 +59,49 @@ export default function App() {
     } catch (e) {
       console.error('Theme load error', e);
     }
-    return true; // Default dark mode for modern sleek tech portfolio
+    return true;
   });
 
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const [isAdminAuthOpen, setIsAdminAuthOpen] = useState(false);
+  const [isAdminCMSOpen, setIsAdminCMSOpen] = useState(false);
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [showQuickBar, setShowQuickBar] = useState(false);
   const [copiedQuickEmail, setCopiedQuickEmail] = useState(false);
   const [isCloudSynced, setIsCloudSynced] = useState(false);
+
+  // Monitor Firebase Auth State
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setCurrentUser(user);
+      const adminStatus = isUserAdmin(user);
+      setIsAdmin(adminStatus);
+
+      // If user logs in as Admin and URL has #admin, open CMS
+      if (adminStatus && (window.location.hash === '#admin' || window.location.pathname.includes('/admin'))) {
+        setIsAdminCMSOpen(true);
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  // Listen to hash change
+  useEffect(() => {
+    const handleHash = () => {
+      if (window.location.hash === '#admin' || window.location.pathname.includes('/admin')) {
+        if (isAdmin) {
+          setIsAdminCMSOpen(true);
+        } else {
+          setIsAdminAuthOpen(true);
+        }
+      }
+    };
+    handleHash();
+    window.addEventListener('hashchange', handleHash);
+    return () => window.removeEventListener('hashchange', handleHash);
+  }, [isAdmin]);
 
   // Initial cloud fetch & sync subscription
   useEffect(() => {
@@ -56,7 +114,7 @@ export default function App() {
           setProfile(cloudData);
           setIsCloudSynced(true);
         } else if (!cloudData && isMounted) {
-          // If no doc in cloud yet, seed with current profile
+          // If no doc in cloud yet, seed with default profile
           await saveProfileToCloud(profile);
           setIsCloudSynced(true);
         }
@@ -132,18 +190,82 @@ export default function App() {
     setTimeout(() => setCopiedQuickEmail(false), 2000);
   };
 
+  // If Admin CMS is open and user is verified Admin, render the Full Admin CMS Dashboard
+  if (isAdminCMSOpen && isAdmin) {
+    return (
+      <AdminCMSDashboard
+        profile={profile}
+        onSaveProfile={handleSaveProfile}
+        currentUser={currentUser}
+        isAdmin={isAdmin}
+        onCloseCMS={() => {
+          setIsAdminCMSOpen(false);
+          if (window.location.hash === '#admin') {
+            window.location.hash = '';
+          }
+        }}
+        darkMode={darkMode}
+        onToggleDarkMode={() => setDarkMode(!darkMode)}
+      />
+    );
+  }
+
   return (
     <div className={`min-h-screen transition-colors duration-300 font-sans ${
       darkMode ? 'bg-[#08090D] text-[#F8FAFC] selection:bg-[#7C3AED] selection:text-white' : 'bg-[#F8FAFC] text-[#0F172A] selection:bg-[#2563EB]/20 selection:text-[#0F172A]'
     }`}>
       
+      {/* Top Floating Admin Bar for Authenticated Admin */}
+      {isAdmin && (
+        <div className="bg-[#0E1118] text-white border-b border-purple-500/30 px-4 py-2 text-xs flex items-center justify-between sticky top-0 z-50 shadow-lg">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="font-bold text-white flex items-center gap-1.5">
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+              <span>Chế Độ Quản Trị Viên (Admin Active)</span>
+            </span>
+            <span className="text-[#94A3B8] font-mono hidden sm:inline">• {currentUser?.email}</span>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setIsAdminCMSOpen(true)}
+              className="px-3 py-1 rounded-lg text-xs font-semibold bg-gradient-to-r from-[#7C3AED] to-[#2563EB] text-white flex items-center gap-1.5 shadow-sm"
+            >
+              <Sliders className="w-3.5 h-3.5" />
+              <span>Vào Bảng Điều Khiển CMS</span>
+            </button>
+
+            <button
+              onClick={async () => {
+                await logoutAdmin();
+              }}
+              className="px-2.5 py-1 rounded-lg text-xs bg-white/10 hover:bg-rose-500/20 text-[#94A3B8] hover:text-rose-400 border border-white/10 transition-colors flex items-center gap-1"
+              title="Đăng xuất quyền Admin"
+            >
+              <LogOut className="w-3 h-3" />
+              <span className="hidden sm:inline">Đăng xuất</span>
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Top Navigation */}
       <Navbar
         profile={profile}
-        onOpenEditor={() => setIsEditorOpen(true)}
+        onOpenEditor={() => {
+          if (isAdmin) {
+            setIsAdminCMSOpen(true);
+          } else {
+            setIsAdminAuthOpen(true);
+          }
+        }}
+        onOpenAdminAuth={() => setIsAdminAuthOpen(true)}
         darkMode={darkMode}
         onToggleDarkMode={() => setDarkMode(!darkMode)}
         isCloudSynced={isCloudSynced}
+        currentUser={currentUser}
+        isAdmin={isAdmin}
       />
 
       {/* Main Content Sections */}
@@ -152,14 +274,27 @@ export default function App() {
         <HeroBio 
           profile={profile} 
           darkMode={darkMode} 
-          onOpenEditor={() => setIsEditorOpen(true)} 
+          onOpenEditor={() => {
+            if (isAdmin) {
+              setIsAdminCMSOpen(true);
+            } else {
+              setIsAdminAuthOpen(true);
+            }
+          }} 
         />
 
         {/* ⭐ Featured Web Apps Showcase (Primary Focus) */}
         <ProjectShowcase
           projects={profile.projects}
           darkMode={darkMode}
-          onOpenEditor={() => setIsEditorOpen(true)}
+          onOpenEditor={() => {
+            if (isAdmin) {
+              setIsAdminCMSOpen(true);
+            } else {
+              setIsAdminAuthOpen(true);
+            }
+          }}
+          isAdmin={isAdmin}
         />
 
         {/* Work Experience Timeline & Education */}
@@ -169,6 +304,7 @@ export default function App() {
           certifications={profile.certifications}
           awards={profile.awards}
           darkMode={darkMode}
+          isAdmin={isAdmin}
         />
 
         {/* Skills & Tech Matrix */}
@@ -188,10 +324,30 @@ export default function App() {
       <Footer 
         profile={profile} 
         darkMode={darkMode} 
-        onOpenEditor={() => setIsEditorOpen(true)} 
+        onOpenEditor={() => {
+          if (isAdmin) {
+            setIsAdminCMSOpen(true);
+          } else {
+            setIsAdminAuthOpen(true);
+          }
+        }} 
       />
 
-      {/* Profile & Web App Editor Modal */}
+      {/* Admin Authentication Modal */}
+      {isAdminAuthOpen && (
+        <AdminAuthModal
+          currentUser={currentUser}
+          isAdmin={isAdmin}
+          onClose={() => setIsAdminAuthOpen(false)}
+          onOpenCMS={() => {
+            setIsAdminAuthOpen(false);
+            setIsAdminCMSOpen(true);
+          }}
+          darkMode={darkMode}
+        />
+      )}
+
+      {/* Profile & Web App Editor Modal (Legacy Quick Editor fallback) */}
       {isEditorOpen && (
         <ProfileEditorModal
           profile={profile}

@@ -18,6 +18,7 @@ interface ExperienceSectionProps {
   certifications?: CertificationItem[];
   awards?: AwardItem[];
   darkMode: boolean;
+  isAdmin?: boolean;
 }
 
 export const ExperienceSection: React.FC<ExperienceSectionProps> = ({
@@ -25,9 +26,12 @@ export const ExperienceSection: React.FC<ExperienceSectionProps> = ({
   educations,
   certifications,
   awards,
-  darkMode
+  darkMode,
+  isAdmin = false
 }) => {
   const [activeTab, setActiveTab] = useState<'work' | 'education' | 'certifications'>('work');
+
+  const visibleExperiences = experiences.filter(exp => isAdmin || exp.published !== false);
 
   return (
     <section 
@@ -112,7 +116,7 @@ export const ExperienceSection: React.FC<ExperienceSectionProps> = ({
             <div className="absolute left-4 sm:left-1/2 top-4 bottom-4 w-0.5 bg-gradient-to-b from-[#7C3AED] via-[#2563EB] to-transparent -translate-x-1/2 hidden sm:block" />
 
             <div className="space-y-10">
-              {experiences.map((exp, idx) => {
+              {visibleExperiences.map((exp, idx) => {
                 const isEven = idx % 2 === 0;
                 return (
                   <div 
@@ -138,6 +142,11 @@ export const ExperienceSection: React.FC<ExperienceSectionProps> = ({
                         {/* Company & Role Header */}
                         <div className="flex flex-wrap items-start justify-between gap-2 mb-3">
                           <div>
+                            {exp.published === false && (
+                              <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-500/20 text-amber-300 border border-amber-500/40 mr-2 mb-2">
+                                Bản nháp
+                              </span>
+                            )}
                             <span className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border mb-2 ${
                               darkMode ? 'bg-[#7C3AED]/15 text-[#A78BFA] border-[#7C3AED]/30' : 'bg-purple-50 text-[#7C3AED] border-purple-200'
                             }`}>

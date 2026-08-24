@@ -1,6 +1,6 @@
 {
   "name": "Hồ Sơ & Năng Lực Kỹ Sư Kinh Tế Xây Dựng",
-  "description": "Hồ sơ năng lực Kỹ sư Kinh tế Xây dựng Bùi Việt Hoàng với 6 năm kinh nghiệm tại các chủ đầu tư lớn (Vinhomes, Phú Điền, TCT 36) và năng lực tự động hóa công việc bằng AI.",
+  "description": "Website thương hiệu cá nhân & danh mục sản phẩm Web App thực tế của Bùi Việt Hoàng (Kỹ sư Kinh tế Xây dựng & AI Builder) tích hợp hệ thống quản trị nội dung Admin CMS bảo mật qua Google Cloud Firestore.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

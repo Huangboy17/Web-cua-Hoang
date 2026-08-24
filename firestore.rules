@@ -1,11 +1,32 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /portfolio_settings/{docId} {
-      allow read, write: if true;
+    
+    // Check if the authenticated user is the designated portfolio administrator
+    function isAdmin() {
+      return request.auth != null && 
+        (request.auth.token.email.lower() == 'buiviethoangktxd@gmail.com' || 
+         request.auth.token.email.lower() == 'buiviehoangktxd@gmail.com');
     }
+
+    // Contact messages: Anyone can submit a message, but ONLY admin can read, modify or delete
+    match /contact_messages/{messageId} {
+      allow create: if request.resource.data.name is string 
+                    && request.resource.data.email is string
+                    && request.resource.data.message is string;
+      allow read, update, delete: if isAdmin();
+    }
+
+    // Public read for portfolio settings and profile data, write strictly reserved for admin
+    match /portfolio_settings/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Default fallback
     match /{document=**} {
-      allow read, write: if true;
+      allow read: if true;
+      allow write: if isAdmin();
     }
   }
 }
