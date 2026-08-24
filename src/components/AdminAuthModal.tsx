@@ -14,26 +14,37 @@ import { User } from 'firebase/auth';
 import { signInAdminWithGoogle, logoutAdmin, ADMIN_EMAILS } from '../firebase';
 
 interface AdminAuthModalProps {
-  isOpen: boolean;
+  isOpen?: boolean;
   onClose: () => void;
   currentUser: User | null;
   isAdmin: boolean;
-  onOpenEditor: () => void;
+  onOpenCMS?: () => void;
+  onOpenEditor?: () => void;
   darkMode: boolean;
 }
 
 export const AdminAuthModal: React.FC<AdminAuthModalProps> = ({
-  isOpen,
+  isOpen = true,
   onClose,
   currentUser,
   isAdmin,
+  onOpenCMS,
   onOpenEditor,
   darkMode,
 }) => {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  if (!isOpen) return null;
+  if (isOpen === false) return null;
+
+  const handleOpenAdminPanel = () => {
+    onClose();
+    if (onOpenCMS) {
+      onOpenCMS();
+    } else if (onOpenEditor) {
+      onOpenEditor();
+    }
+  };
 
   const handleGoogleSignIn = async () => {
     setLoading(true);
@@ -41,7 +52,8 @@ export const AdminAuthModal: React.FC<AdminAuthModalProps> = ({
     try {
       const { user, isAdmin: isUserAdmin } = await signInAdminWithGoogle();
       if (isUserAdmin) {
-        // Success
+        // Automatically open the Admin CMS upon successful login
+        handleOpenAdminPanel();
       } else {
         setErrorMsg(`Tài khoản ${user.email || 'này'} không có quyền quản trị. Chỉ có ${ADMIN_EMAILS[0]} mới được phép chỉnh sửa dữ liệu.`);
       }
@@ -130,14 +142,11 @@ export const AdminAuthModal: React.FC<AdminAuthModalProps> = ({
 
             <div className="pt-2 flex flex-col gap-2.5">
               <button
-                onClick={() => {
-                  onClose();
-                  onOpenEditor();
-                }}
+                onClick={handleOpenAdminPanel}
                 className="w-full py-3 px-5 rounded-2xl font-semibold text-xs uppercase tracking-wider text-white bg-gradient-to-r from-[#7C3AED] to-[#2563EB] hover:from-[#6D28D9] hover:to-[#1D4ED8] shadow-lg shadow-purple-500/25 flex items-center justify-center gap-2 transition-all"
               >
                 <Edit3 className="w-4 h-4" />
-                <span>Mở Trình Quản Trị Hồ Sơ</span>
+                <span>Mở Bảng Quản Trị Admin CMS</span>
               </button>
 
               <button
