@@ -11,6 +11,7 @@ import { ContactSection } from './components/ContactSection';
 import { ProfileEditorModal } from './components/ProfileEditorModal';
 import { AdminAuthModal } from './components/AdminAuthModal';
 import { AdminCMSDashboard } from './components/AdminCMSDashboard';
+import { ExportCVModal } from './components/ExportCVModal';
 import { Footer } from './components/Footer';
 import { 
   Layers, 
@@ -22,7 +23,8 @@ import {
   ShieldCheck, 
   Sliders, 
   LogOut, 
-  ExternalLink 
+  ExternalLink,
+  FileText
 } from 'lucide-react';
 import { 
   auth, 
@@ -67,6 +69,7 @@ export default function App() {
   const [isAdminAuthOpen, setIsAdminAuthOpen] = useState(false);
   const [isAdminCMSOpen, setIsAdminCMSOpen] = useState(false);
   const [isEditorOpen, setIsEditorOpen] = useState(false);
+  const [isExportCVOpen, setIsExportCVOpen] = useState(false);
   const [showQuickBar, setShowQuickBar] = useState(false);
   const [copiedQuickEmail, setCopiedQuickEmail] = useState(false);
   const [isCloudSynced, setIsCloudSynced] = useState(false);
@@ -261,6 +264,7 @@ export default function App() {
           }
         }}
         onOpenAdminAuth={() => setIsAdminAuthOpen(true)}
+        onOpenExportCV={() => setIsExportCVOpen(true)}
         darkMode={darkMode}
         onToggleDarkMode={() => setDarkMode(!darkMode)}
         isCloudSynced={isCloudSynced}
@@ -274,6 +278,7 @@ export default function App() {
         <HeroBio 
           profile={profile} 
           darkMode={darkMode} 
+          onOpenExportCV={() => setIsExportCVOpen(true)}
           onOpenEditor={() => {
             if (isAdmin) {
               setIsAdminCMSOpen(true);
@@ -304,6 +309,7 @@ export default function App() {
           certifications={profile.certifications}
           darkMode={darkMode}
           isAdmin={isAdmin}
+          onOpenExportCV={() => setIsExportCVOpen(true)}
         />
 
         {/* Skills & Tech Matrix */}
@@ -323,6 +329,7 @@ export default function App() {
       <Footer 
         profile={profile} 
         darkMode={darkMode} 
+        onOpenExportCV={() => setIsExportCVOpen(true)}
         onOpenEditor={() => {
           if (isAdmin) {
             setIsAdminCMSOpen(true);
@@ -330,6 +337,14 @@ export default function App() {
             setIsAdminAuthOpen(true);
           }
         }} 
+      />
+
+      {/* Export / Print Professional CV Modal */}
+      <ExportCVModal
+        profile={profile}
+        isOpen={isExportCVOpen}
+        onClose={() => setIsExportCVOpen(false)}
+        darkMode={darkMode}
       />
 
       {/* Admin Authentication Modal */}
@@ -379,6 +394,20 @@ export default function App() {
             <Layers className="w-3.5 h-3.5" />
             <span>Web Apps ({profile.projects.length})</span>
           </a>
+
+          {/* Export CV button in floating bar */}
+          <button
+            onClick={() => setIsExportCVOpen(true)}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${
+              darkMode
+                ? 'bg-purple-500/15 hover:bg-purple-500/25 text-[#A78BFA] border-purple-500/40 hover:border-[#A78BFA]'
+                : 'bg-purple-50 hover:bg-purple-100 text-[#7C3AED] border-purple-200'
+            }`}
+            title="Xuất hồ sơ CV hoàn chỉnh (PDF)"
+          >
+            <FileText className="w-3.5 h-3.5 text-[#A78BFA]" />
+            <span className="hidden sm:inline">Xuất CV</span>
+          </button>
 
           <button
             onClick={handleCopyQuickEmail}

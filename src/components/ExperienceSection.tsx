@@ -6,7 +6,8 @@ import {
   GraduationCap, 
   CheckCircle2, 
   Building2, 
-  ShieldCheck
+  ShieldCheck,
+  FileText
 } from 'lucide-react';
 import { WorkExperience, EducationItem, CertificationItem } from '../types';
 
@@ -16,6 +17,7 @@ interface ExperienceSectionProps {
   certifications?: CertificationItem[];
   darkMode: boolean;
   isAdmin?: boolean;
+  onOpenExportCV?: () => void;
 }
 
 export const ExperienceSection: React.FC<ExperienceSectionProps> = ({
@@ -23,7 +25,8 @@ export const ExperienceSection: React.FC<ExperienceSectionProps> = ({
   educations,
   certifications,
   darkMode,
-  isAdmin = false
+  isAdmin = false,
+  onOpenExportCV
 }) => {
   const [activeTab, setActiveTab] = useState<'work' | 'education' | 'certifications'>('work');
 
@@ -103,6 +106,24 @@ export const ExperienceSection: React.FC<ExperienceSectionProps> = ({
               <span>Chứng Chỉ Hành Nghề</span>
             </button>
           </div>
+
+          {/* Quick CV Export Action for Recruiters */}
+          {onOpenExportCV && (
+            <div className="mt-4">
+              <button
+                onClick={onOpenExportCV}
+                className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold border transition-all ${
+                  darkMode 
+                    ? 'bg-white/5 hover:bg-white/10 text-[#A78BFA] hover:text-white border-white/10 hover:border-[#7C3AED]/50' 
+                    : 'bg-white hover:bg-slate-100 text-[#7C3AED] border-slate-200 shadow-sm'
+                }`}
+                title="Xuất bản in / PDF toàn bộ kinh nghiệm và học vấn"
+              >
+                <FileText className="w-3.5 h-3.5 text-[#7C3AED]" />
+                <span>Xuất Hồ Sơ CV Đầy Đủ (PDF)</span>
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Tab 1: Work Experience Timeline */}
@@ -201,7 +222,7 @@ export const ExperienceSection: React.FC<ExperienceSectionProps> = ({
 
                         {/* Tech & Tool tags */}
                         <div className="pt-3 border-t border-white/10 flex flex-wrap gap-1.5">
-                          {exp.technologies.map((t) => (
+                          {(exp.technologies || []).map((t) => (
                             <span 
                               key={t}
                               className={`px-2.5 py-0.5 rounded-full text-[11px] font-mono border ${

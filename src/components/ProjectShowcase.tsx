@@ -339,7 +339,7 @@ export const ProjectShowcase: React.FC<ProjectShowcaseProps> = ({
 
                     {/* Tech tags */}
                     <div className="flex flex-wrap gap-1.5 mb-5">
-                      {project.tags.map((tag) => (
+                      {(project.tags || []).map((tag) => (
                         <span
                           key={tag}
                           className={`px-2.5 py-0.5 rounded-md text-[11px] font-mono border ${

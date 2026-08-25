@@ -1,14 +1,15 @@
 import React from 'react';
-import { ArrowUp, Layers } from 'lucide-react';
+import { ArrowUp, Layers, FileText } from 'lucide-react';
 import { UserProfile } from '../types';
 
 interface FooterProps {
   profile: UserProfile;
   darkMode: boolean;
   onOpenEditor: () => void;
+  onOpenExportCV?: () => void;
 }
 
-export const Footer: React.FC<FooterProps> = ({ profile, darkMode, onOpenEditor }) => {
+export const Footer: React.FC<FooterProps> = ({ profile, darkMode, onOpenEditor, onOpenExportCV }) => {
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -48,6 +49,14 @@ export const Footer: React.FC<FooterProps> = ({ profile, darkMode, onOpenEditor 
             </a>
             <a href="#experience" className={`transition-colors ${darkMode ? 'hover:text-[#A78BFA]' : 'hover:text-[#2563EB]'}`}>Kinh Nghiệm</a>
             <a href="#skills" className={`transition-colors ${darkMode ? 'hover:text-[#A78BFA]' : 'hover:text-[#2563EB]'}`}>Kỹ Năng</a>
+            {onOpenExportCV && (
+              <button 
+                onClick={onOpenExportCV} 
+                className="text-[#A78BFA] hover:text-white font-semibold flex items-center gap-1 hover:underline"
+              >
+                <FileText className="w-3.5 h-3.5" /> Xuất CV (PDF)
+              </button>
+            )}
             <a href="#contact" className={`transition-colors ${darkMode ? 'hover:text-[#A78BFA]' : 'hover:text-[#2563EB]'}`}>Liên Hệ</a>
             <button onClick={onOpenEditor} className="text-[#2563EB] hover:text-[#7C3AED] hover:underline font-semibold">
               ⚙️ Quản trị hồ sơ

@@ -242,7 +242,7 @@ export const ProfileEditorModal: React.FC<ProfileEditorModalProps> = ({
               </div>
 
               <div className="space-y-6">
-                {formData.projects.map((proj, idx) => (
+                {(formData.projects || []).map((proj, idx) => (
                   <div 
                     key={proj.id}
                     className={`p-5 rounded-3xl border ${
@@ -495,7 +495,7 @@ export const ProfileEditorModal: React.FC<ProfileEditorModalProps> = ({
           {activeTab === 'experience' && (
             <div className="space-y-4">
               <h3 className="text-base font-bold text-[#A78BFA]">Kinh Nghiệm Làm Việc</h3>
-              {formData.experiences.map((exp, idx) => (
+              {(formData.experiences || []).map((exp, idx) => (
                 <div 
                   key={exp.id}
                   className={`p-4 rounded-2xl border space-y-3 ${

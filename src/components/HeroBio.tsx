@@ -16,7 +16,8 @@ import {
   Layers,
   Building2,
   Code2,
-  Camera
+  Camera,
+  FileText
 } from 'lucide-react';
 import { UserProfile } from '../types';
 
@@ -24,9 +25,10 @@ interface HeroBioProps {
   profile: UserProfile;
   darkMode: boolean;
   onOpenEditor: () => void;
+  onOpenExportCV?: () => void;
 }
 
-export const HeroBio: React.FC<HeroBioProps> = ({ profile, darkMode, onOpenEditor }) => {
+export const HeroBio: React.FC<HeroBioProps> = ({ profile, darkMode, onOpenEditor, onOpenExportCV }) => {
   const [copiedEmail, setCopiedEmail] = useState(false);
   const [copiedPhone, setCopiedPhone] = useState(false);
 
@@ -142,6 +144,23 @@ export const HeroBio: React.FC<HeroBioProps> = ({ profile, darkMode, onOpenEdito
                 <span>Xem Các Web App Đã Làm</span>
                 <ArrowRight className="w-4 h-4" />
               </a>
+
+              {/* Crucial Recruiter Action: Export / Print CV */}
+              {onOpenExportCV && (
+                <button
+                  id="hero-cta-export-cv"
+                  onClick={onOpenExportCV}
+                  className={`inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full font-semibold text-xs uppercase tracking-[0.15em] transition-all border shadow-sm ${
+                    darkMode
+                      ? 'bg-gradient-to-r from-[#7C3AED]/20 to-[#2563EB]/20 hover:from-[#7C3AED]/30 hover:to-[#2563EB]/30 text-[#A78BFA] hover:text-white border-[#7C3AED]/50 hover:border-[#A78BFA]'
+                      : 'bg-gradient-to-r from-purple-50 to-blue-50 hover:from-purple-100 hover:to-blue-100 text-[#7C3AED] border-purple-200 shadow-purple-500/10'
+                  }`}
+                  title="Xem & Xuất hồ sơ CV hoàn chỉnh để trình duyệt / báo cáo lãnh đạo"
+                >
+                  <FileText className="w-4 h-4 text-[#A78BFA]" />
+                  <span>Xuất CV (PDF)</span>
+                </button>
+              )}
 
               {/* Secondary CTA: Contact */}
               <a

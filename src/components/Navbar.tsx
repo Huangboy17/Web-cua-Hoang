@@ -13,7 +13,9 @@ import {
   Cloud,
   Check,
   ShieldCheck,
-  Lock
+  Lock,
+  FileText,
+  Download
 } from 'lucide-react';
 import { User } from 'firebase/auth';
 import { UserProfile } from '../types';
@@ -22,6 +24,7 @@ interface NavbarProps {
   profile: UserProfile;
   onOpenEditor: () => void;
   onOpenAdminAuth: () => void;
+  onOpenExportCV?: () => void;
   darkMode: boolean;
   onToggleDarkMode: () => void;
   isCloudSynced?: boolean;
@@ -33,6 +36,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   profile,
   onOpenEditor,
   onOpenAdminAuth,
+  onOpenExportCV,
   darkMode,
   onToggleDarkMode,
   isCloudSynced = true,
@@ -137,7 +141,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             {/* Cloud Sync Status Badge */}
             <div 
               title={isCloudSynced ? "Đã đồng bộ Google Cloud Firestore" : "Đang kết nối Google Cloud..."}
-              className={`hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-mono border transition-all ${
+              className={`hidden xl:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-mono border transition-all ${
                 isCloudSynced
                   ? darkMode 
                     ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' 
@@ -151,6 +155,23 @@ export const Navbar: React.FC<NavbarProps> = ({
               <span>{isCloudSynced ? 'Cloud Synced' : 'Syncing...'}</span>
               {isCloudSynced && <Check className="w-3 h-3" />}
             </div>
+
+            {/* Export CV Button */}
+            {onOpenExportCV && (
+              <button
+                id="btn-navbar-export-cv"
+                onClick={onOpenExportCV}
+                title="Xem & Xuất hồ sơ CV hoàn chỉnh (PDF/Print) để báo cáo lãnh đạo"
+                className={`px-3 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1.5 transition-all border ${
+                  darkMode
+                    ? 'bg-[#7C3AED]/15 hover:bg-[#7C3AED]/25 text-[#A78BFA] border-[#7C3AED]/40 hover:border-[#A78BFA]'
+                    : 'bg-purple-50 hover:bg-purple-100 text-[#7C3AED] border-purple-200 shadow-sm'
+                }`}
+              >
+                <FileText className="w-3.5 h-3.5" />
+                <span>Xuất CV</span>
+              </button>
+            )}
 
             {/* Customize / Edit Profile Button or Admin Auth */}
             {isAdmin ? (
@@ -226,6 +247,20 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <span>{item.label}</span>
               </a>
             ))}
+
+            {/* Mobile Xuất CV Action */}
+            {onOpenExportCV && (
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  onOpenExportCV();
+                }}
+                className="w-full px-4 py-3 rounded-xl text-sm font-semibold flex items-center gap-3 bg-purple-500/10 border border-purple-500/20 text-[#A78BFA] hover:bg-purple-500/20 transition-all"
+              >
+                <FileText className="w-4 h-4 text-[#A78BFA]" />
+                <span>Xuất Hồ Sơ CV (PDF / In Báo Cáo)</span>
+              </button>
+            )}
 
             <div className="pt-2 border-t border-white/10">
               {isAdmin ? (

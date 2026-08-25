@@ -53,6 +53,7 @@ import {
 } from '../firebase';
 import { DEFAULT_PROFILE } from '../data/defaultData';
 import { AvatarUploader } from './AvatarUploader';
+import { ExportCVModal } from './ExportCVModal';
 
 interface AdminCMSDashboardProps {
   profile: UserProfile;
@@ -90,6 +91,7 @@ export const AdminCMSDashboard: React.FC<AdminCMSDashboardProps> = ({
   // Experience Edit State
   const [editingExperience, setEditingExperience] = useState<WorkExperience | null>(null);
   const [isNewExperience, setIsNewExperience] = useState(false);
+  const [isExportCVOpen, setIsExportCVOpen] = useState(false);
 
   // Sync state when profile prop changes
   useEffect(() => {
@@ -300,6 +302,16 @@ export const AdminCMSDashboard: React.FC<AdminCMSDashboardProps> = ({
           >
             <Save className="w-3.5 h-3.5" />
             <span>{isSaving ? 'Đang lưu...' : 'Lưu Thay Đổi'}</span>
+          </button>
+
+          {/* Export CV button in CMS header */}
+          <button
+            onClick={() => setIsExportCVOpen(true)}
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-[#7C3AED]/20 hover:bg-[#7C3AED]/30 text-[#A78BFA] hover:text-white border border-[#7C3AED]/40 transition-all"
+            title="Xem trước & Xuất hồ sơ CV hoàn chỉnh (PDF) để gửi lãnh đạo"
+          >
+            <FileText className="w-3.5 h-3.5 text-[#A78BFA]" />
+            <span className="hidden sm:inline">Xuất CV (PDF)</span>
           </button>
 
           <button
@@ -1763,6 +1775,14 @@ export const AdminCMSDashboard: React.FC<AdminCMSDashboardProps> = ({
 
         </main>
       </div>
+
+      {/* Export / Print CV Modal */}
+      <ExportCVModal
+        profile={formData}
+        isOpen={isExportCVOpen}
+        onClose={() => setIsExportCVOpen(false)}
+        darkMode={darkMode}
+      />
 
     </div>
   );

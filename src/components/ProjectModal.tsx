@@ -235,7 +235,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose, da
                 <span>Tính Năng Nổi Bật:</span>
               </div>
               <ul className="space-y-1.5">
-                {project.keyFeatures.map((feat, idx) => (
+                {(project.keyFeatures || []).map((feat, idx) => (
                   <li key={idx} className="text-xs flex items-start gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-[#7C3AED] shrink-0 mt-0.5" />
                     <span className={darkMode ? 'text-[#F8FAFC]/90' : 'text-[#334155]'}>{feat}</span>
@@ -252,7 +252,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose, da
               Công Nghệ & Thư Viện Sử Dụng
             </h3>
             <div className="flex flex-wrap gap-2">
-              {project.tags.map((tag) => (
+              {(project.tags || []).map((tag) => (
                 <span
                   key={tag}
                   className={`px-3 py-1 rounded-lg text-xs font-mono border ${
