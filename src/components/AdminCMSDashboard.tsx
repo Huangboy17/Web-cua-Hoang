@@ -52,6 +52,7 @@ import {
   ADMIN_EMAILS 
 } from '../firebase';
 import { DEFAULT_PROFILE } from '../data/defaultData';
+import { AvatarUploader } from './AvatarUploader';
 
 interface AdminCMSDashboardProps {
   profile: UserProfile;
@@ -406,7 +407,7 @@ export const AdminCMSDashboard: React.FC<AdminCMSDashboardProps> = ({
             >
               <div className="flex items-center gap-2.5">
                 <Globe className="w-4 h-4 text-[#F43F5E]" />
-                <span>Hero, Bio & Mạng Xã Hội</span>
+                <span>Avatar, Hero & Bio</span>
               </div>
             </button>
 
@@ -1412,12 +1413,20 @@ export const AdminCMSDashboard: React.FC<AdminCMSDashboardProps> = ({
               <div>
                 <h2 className="text-2xl font-bold tracking-tight text-white flex items-center gap-2">
                   <Globe className="w-6 h-6 text-[#F43F5E]" />
-                  <span>Nội Dung Hero, Tiểu Sử & Thông Tin Liên Hệ</span>
+                  <span>Ảnh Đại Diện, Nội Dung Hero & Tiểu Sử</span>
                 </h2>
                 <p className="text-xs text-[#94A3B8] mt-0.5">
-                  Tùy chỉnh thông tin hiển thị trên phần đầu trang web và chân trang.
+                  Tùy chỉnh ảnh đại diện Avatar, thông tin hiển thị trên phần đầu trang web và kênh liên hệ.
                 </p>
               </div>
+
+              {/* Avatar Import & Upload Component */}
+              <AvatarUploader
+                currentAvatarUrl={formData.avatarUrl}
+                onAvatarChange={(newUrl) => setFormData({ ...formData, avatarUrl: newUrl })}
+                darkMode={true}
+                label="Ảnh Đại Diện (Avatar Profile)"
+              />
 
               <div className="p-6 rounded-3xl bg-[#11131A] border border-white/10 space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -1647,7 +1656,7 @@ export const AdminCMSDashboard: React.FC<AdminCMSDashboardProps> = ({
               <div>
                 <h2 className="text-2xl font-bold tracking-tight text-white flex items-center gap-2">
                   <GraduationCap className="w-6 h-6 text-[#10B981]" />
-                  <span>Học Vấn, Chứng Chỉ & Giải Thưởng</span>
+                  <span>Học Vấn & Bằng Cấp</span>
                 </h2>
               </div>
 

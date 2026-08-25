@@ -302,7 +302,6 @@ export default function App() {
           experiences={profile.experiences}
           educations={profile.educations}
           certifications={profile.certifications}
-          awards={profile.awards}
           darkMode={darkMode}
           isAdmin={isAdmin}
         />

@@ -16,6 +16,7 @@ import {
   KeyRound
 } from 'lucide-react';
 import { UserProfile, ProjectApp, WorkExperience } from '../types';
+import { AvatarUploader } from './AvatarUploader';
 
 interface ProfileEditorModalProps {
   profile: UserProfile;
@@ -466,19 +467,15 @@ export const ProfileEditorModal: React.FC<ProfileEditorModalProps> = ({
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-semibold mb-1 text-[#94A3B8]">Avatar URL</label>
-                  <input
-                    type="text"
-                    value={formData.avatarUrl}
-                    onChange={(e) => setFormData({ ...formData, avatarUrl: e.target.value })}
-                    className={`w-full px-3 py-2.5 rounded-xl text-xs sm:text-sm border ${
-                      darkMode ? 'bg-[#08090D] border-white/10 text-white' : 'bg-white border-[#E2E8F0]'
-                    }`}
-                  />
-                </div>
+              {/* Avatar Uploader */}
+              <AvatarUploader
+                currentAvatarUrl={formData.avatarUrl}
+                onAvatarChange={(newUrl) => setFormData({ ...formData, avatarUrl: newUrl })}
+                darkMode={darkMode}
+                label="Ảnh Đại Diện (Import / Upload)"
+              />
 
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-semibold mb-1 text-[#94A3B8]">Số năm kinh nghiệm</label>
                   <input

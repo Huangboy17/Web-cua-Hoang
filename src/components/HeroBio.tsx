@@ -15,7 +15,8 @@ import {
   Globe, 
   Layers,
   Building2,
-  Code2
+  Code2,
+  Camera
 } from 'lucide-react';
 import { UserProfile } from '../types';
 
@@ -249,13 +250,20 @@ export const HeroBio: React.FC<HeroBioProps> = ({ profile, darkMode, onOpenEdito
               <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#7C3AED] via-[#6366F1] to-[#2563EB]" />
 
               <div className="flex items-center gap-4 mb-6">
-                <div className="relative">
+                <div 
+                  onClick={onOpenEditor}
+                  className="relative group cursor-pointer"
+                  title="Nhấn để đổi / import ảnh đại diện"
+                >
                   <img 
                     src={profile.avatarUrl} 
                     alt={profile.fullName} 
-                    className="w-16 h-16 rounded-2xl object-cover border-2 border-[#7C3AED]/40 shadow-lg"
+                    className="w-16 h-16 rounded-2xl object-cover border-2 border-[#7C3AED]/40 shadow-lg group-hover:border-[#7C3AED] transition-all group-hover:scale-105"
                   />
-                  <div className="absolute -bottom-1 -right-1 p-1 rounded-full bg-[#7C3AED] text-white">
+                  <div className="absolute inset-0 bg-black/40 rounded-2xl opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity text-white">
+                    <Camera className="w-5 h-5" />
+                  </div>
+                  <div className="absolute -bottom-1 -right-1 p-1 rounded-full bg-[#7C3AED] text-white shadow-sm">
                     <Sparkles className="w-3 h-3" />
                   </div>
                 </div>

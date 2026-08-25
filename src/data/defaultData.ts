@@ -266,22 +266,7 @@ export const DEFAULT_PROFILE: UserProfile = {
       credentialUrl: '#'
     }
   ],
-  awards: [
-    {
-      id: 'award-1',
-      title: 'Nhân viên Xuất sắc nhất năm (Employee of the Year)',
-      awarder: 'NextWave Corp / Ban Điều Hành Tập Đoàn',
-      date: '2024',
-      description: 'Vinh danh đóng góp nổi bật trong việc tối ưu hóa chi phí, cải tiến quy trình quản trị ngân sách và dẫn dắt triển khai các ứng dụng số hóa giao hàng đúng tiến độ.'
-    },
-    {
-      id: 'award-2',
-      title: 'Giải Nhất Hackathon Đổi mới Sáng tạo Công nghệ',
-      awarder: 'Hiệp hội Phần mềm & CNTT Việt Nam (VINASA)',
-      date: '2021',
-      description: 'Dự án "AI Document Assistant" - Tự động hóa trích xuất dữ liệu hóa đơn, hồ sơ dự toán và hợp đồng thương mại.'
-    }
-  ],
+  awards: [],
   skillCategories: [
     {
       categoryName: 'Chuyên Môn Kinh Tế Xây Dựng & Dự Toán',

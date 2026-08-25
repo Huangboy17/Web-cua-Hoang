@@ -8,9 +8,7 @@ import {
   collection,
   addDoc,
   updateDoc,
-  deleteDoc,
-  query,
-  orderBy
+  deleteDoc
 } from 'firebase/firestore';
 import { 
   getAuth, 
@@ -26,8 +24,8 @@ import { DEFAULT_PROFILE } from './data/defaultData';
 
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
 
-export const db = firebaseConfig.firestoreDatabaseId && firebaseConfig.firestoreDatabaseId !== '(default)'
-  ? getFirestore(app, firebaseConfig.firestoreDatabaseId)
+export const db = (firebaseConfig as any).firestoreDatabaseId && (firebaseConfig as any).firestoreDatabaseId !== '(default)'
+  ? getFirestore(app, (firebaseConfig as any).firestoreDatabaseId)
   : getFirestore(app);
 
 export const auth = getAuth(app);

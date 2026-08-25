@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { 
-  ShieldCheck, 
-  Lock, 
   X, 
+  Lock, 
+  ShieldCheck, 
   LogOut, 
+  LogIn, 
+  Loader2, 
   Edit3, 
   AlertCircle, 
   CheckCircle2, 
@@ -134,7 +136,7 @@ export const AdminAuthModal: React.FC<AdminAuthModalProps> = ({
                     {currentUser?.email}
                   </p>
                   <p className={`text-[11px] mt-1.5 ${darkMode ? 'text-[#94A3B8]' : 'text-slate-600'}`}>
-                    Bạn có toàn quyền thêm sửa xóa dự án, kinh nghiệm và lưu trữ trực tiếp lên Google Cloud Firestore.
+                    Bạn có toàn quyền thêm, sửa, xóa sản phẩm Web App, kinh nghiệm và lưu trữ trực tiếp lên Google Cloud Firestore.
                   </p>
                 </div>
               </div>

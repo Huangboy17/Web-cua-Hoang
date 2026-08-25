@@ -6,17 +6,14 @@ import {
   GraduationCap, 
   CheckCircle2, 
   Building2, 
-  Award,
-  ShieldCheck,
-  Sparkles
+  ShieldCheck
 } from 'lucide-react';
-import { WorkExperience, EducationItem, CertificationItem, AwardItem } from '../types';
+import { WorkExperience, EducationItem, CertificationItem } from '../types';
 
 interface ExperienceSectionProps {
   experiences: WorkExperience[];
   educations: EducationItem[];
   certifications?: CertificationItem[];
-  awards?: AwardItem[];
   darkMode: boolean;
   isAdmin?: boolean;
 }
@@ -25,7 +22,6 @@ export const ExperienceSection: React.FC<ExperienceSectionProps> = ({
   experiences,
   educations,
   certifications,
-  awards,
   darkMode,
   isAdmin = false
 }) => {
@@ -104,7 +100,7 @@ export const ExperienceSection: React.FC<ExperienceSectionProps> = ({
               }`}
             >
               <ShieldCheck className="w-3.5 h-3.5" />
-              <span>Chứng Chỉ & Giải Thưởng</span>
+              <span>Chứng Chỉ Hành Nghề</span>
             </button>
           </div>
         </div>
@@ -269,12 +265,11 @@ export const ExperienceSection: React.FC<ExperienceSectionProps> = ({
           </div>
         )}
 
-        {/* Tab 3: Certifications & Awards */}
+        {/* Tab 3: Certifications */}
         {activeTab === 'certifications' && (
           <div className="max-w-4xl mx-auto space-y-8">
-            {/* Certifications Block */}
             <div>
-              <div className="flex items-center gap-2 mb-4">
+              <div className="flex items-center gap-2 mb-6">
                 <ShieldCheck className="w-5 h-5 text-[#7C3AED]" />
                 <h3 className={`text-xl font-bold ${darkMode ? 'text-[#F8FAFC]' : 'text-[#0F172A]'}`}>Chứng Chỉ Hành Nghề Chuyên Môn</h3>
               </div>
@@ -283,13 +278,13 @@ export const ExperienceSection: React.FC<ExperienceSectionProps> = ({
                 {(certifications || []).map((cert) => (
                   <div 
                     key={cert.id}
-                    className={`p-5 rounded-3xl border transition-all ${
+                    className={`p-6 rounded-3xl border transition-all hover:border-[#7C3AED]/50 ${
                       darkMode ? 'bg-[#11131A] border-white/10' : 'bg-white border-[#E2E8F0] shadow-sm'
                     }`}
                   >
                     <div className="flex items-start justify-between gap-2 mb-2">
                       <h4 className={`font-semibold text-base ${darkMode ? 'text-[#F8FAFC]' : 'text-[#0F172A]'}`}>{cert.name}</h4>
-                      <span className={`text-[10px] px-2 py-0.5 rounded-full font-mono border ${
+                      <span className={`text-[10px] px-2.5 py-0.5 rounded-full font-mono border shrink-0 ${
                         darkMode ? 'bg-[#7C3AED]/15 text-[#A78BFA] border-[#7C3AED]/30' : 'bg-purple-50 text-[#7C3AED] border-purple-200'
                       }`}>
                         {cert.issueDate}
@@ -303,44 +298,6 @@ export const ExperienceSection: React.FC<ExperienceSectionProps> = ({
                 ))}
               </div>
             </div>
-
-            {/* Awards & Honors Block */}
-            <div>
-              <div className="flex items-center gap-2 mb-4">
-                <Award className="w-5 h-5 text-[#2563EB]" />
-                <h3 className={`text-xl font-bold ${darkMode ? 'text-[#F8FAFC]' : 'text-[#0F172A]'}`}>Giải Thưởng & Vinh Danh</h3>
-              </div>
-
-              <div className="space-y-4">
-                {(awards || []).map((aw) => (
-                  <div 
-                    key={aw.id}
-                    className={`p-5 sm:p-6 rounded-3xl border transition-all ${
-                      darkMode ? 'bg-[#11131A] border-white/10' : 'bg-white border-[#E2E8F0] shadow-sm'
-                    }`}
-                  >
-                    <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
-                      <div className="flex items-center gap-2">
-                        <Sparkles className="w-4 h-4 text-[#A78BFA]" />
-                        <h4 className={`font-bold text-base sm:text-lg ${darkMode ? 'text-[#F8FAFC]' : 'text-[#0F172A]'}`}>{aw.title}</h4>
-                      </div>
-                      <span className={`text-xs px-2.5 py-0.5 rounded-full font-mono border ${
-                        darkMode ? 'bg-[#2563EB]/15 text-[#60A5FA] border-[#2563EB]/30' : 'bg-blue-50 text-[#2563EB] border-blue-200'
-                      }`}>
-                        {aw.date}
-                      </span>
-                    </div>
-                    <p className="text-xs text-[#7C3AED] mb-2 font-semibold font-mono">Đơn vị trao: {aw.awarder}</p>
-                    {aw.description && (
-                      <p className={`text-xs sm:text-sm font-normal leading-relaxed ${darkMode ? 'text-[#94A3B8]' : 'text-[#475569]'}`}>
-                        {aw.description}
-                      </p>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-
           </div>
         )}
 
