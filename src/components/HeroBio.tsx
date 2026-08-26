@@ -20,15 +20,28 @@ import {
   FileText
 } from 'lucide-react';
 import { UserProfile } from '../types';
+import { useLanguage } from '../i18n/LanguageContext';
 
 interface HeroBioProps {
   profile: UserProfile;
   darkMode: boolean;
   onOpenEditor: () => void;
   onOpenExportCV?: () => void;
+  onSelectCategory?: (category: string) => void;
+  onSelectExperienceTab?: (tab: 'work' | 'education' | 'certifications') => void;
+  onFilterExperienceCompany?: (company: string) => void;
 }
 
-export const HeroBio: React.FC<HeroBioProps> = ({ profile, darkMode, onOpenEditor, onOpenExportCV }) => {
+export const HeroBio: React.FC<HeroBioProps> = ({ 
+  profile, 
+  darkMode, 
+  onOpenEditor, 
+  onOpenExportCV,
+  onSelectCategory,
+  onSelectExperienceTab,
+  onFilterExperienceCompany
+}) => {
+  const { t } = useLanguage();
   const [copiedEmail, setCopiedEmail] = useState(false);
   const [copiedPhone, setCopiedPhone] = useState(false);
 
@@ -73,13 +86,13 @@ export const HeroBio: React.FC<HeroBioProps> = ({ profile, darkMode, onOpenEdito
                   }`}
                 >
                   <span className="w-1.5 h-1.5 rounded-full bg-[#7C3AED] animate-pulse" />
-                  <span>Sẵn sàng kết nối • Open to Connect</span>
+                  <span>{t.hero.statusOpen}</span>
                 </div>
               ) : (
                 <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium border ${
                   darkMode ? 'bg-white/5 text-[#94A3B8] border-white/10' : 'bg-slate-100 text-slate-500 border-slate-200'
                 }`}>
-                  <span>Đang thực hiện dự án</span>
+                  <span>{t.hero.statusBusy}</span>
                 </div>
               )}
 
@@ -105,7 +118,7 @@ export const HeroBio: React.FC<HeroBioProps> = ({ profile, darkMode, onOpenEdito
               <span className={`text-xs uppercase tracking-wider font-mono ${
                 darkMode ? 'text-[#94A3B8]' : 'text-[#64748B]'
               }`}>
-                6 Năm Kinh Nghiệm
+                {t.hero.yearsExp}
               </span>
             </div>
 
@@ -141,7 +154,7 @@ export const HeroBio: React.FC<HeroBioProps> = ({ profile, darkMode, onOpenEdito
                 className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-full font-semibold text-white bg-gradient-to-r from-[#7C3AED] via-[#6366F1] to-[#2563EB] hover:from-[#6D28D9] hover:to-[#1D4ED8] shadow-lg shadow-purple-500/25 hover:-translate-y-0.5 transition-all text-xs uppercase tracking-[0.15em]"
               >
                 <Layers className="w-4 h-4" />
-                <span>Xem Các Web App Đã Làm</span>
+                <span>{t.hero.ctaProjects}</span>
                 <ArrowRight className="w-4 h-4" />
               </a>
 
@@ -155,10 +168,10 @@ export const HeroBio: React.FC<HeroBioProps> = ({ profile, darkMode, onOpenEdito
                       ? 'bg-gradient-to-r from-[#7C3AED]/20 to-[#2563EB]/20 hover:from-[#7C3AED]/30 hover:to-[#2563EB]/30 text-[#A78BFA] hover:text-white border-[#7C3AED]/50 hover:border-[#A78BFA]'
                       : 'bg-gradient-to-r from-purple-50 to-blue-50 hover:from-purple-100 hover:to-blue-100 text-[#7C3AED] border-purple-200 shadow-purple-500/10'
                   }`}
-                  title="Xem & Xuất hồ sơ CV hoàn chỉnh để trình duyệt / báo cáo lãnh đạo"
+                  title={t.exportCV.title}
                 >
                   <FileText className="w-4 h-4 text-[#A78BFA]" />
-                  <span>Xuất CV (PDF)</span>
+                  <span>{t.hero.ctaExportCV}</span>
                 </button>
               )}
 
@@ -173,7 +186,7 @@ export const HeroBio: React.FC<HeroBioProps> = ({ profile, darkMode, onOpenEdito
                 }`}
               >
                 <Send className="w-3.5 h-3.5 text-[#2563EB]" />
-                <span>Liên Hệ</span>
+                <span>{t.hero.ctaContact}</span>
               </a>
             </div>
 
@@ -188,7 +201,7 @@ export const HeroBio: React.FC<HeroBioProps> = ({ profile, darkMode, onOpenEdito
                     ? 'bg-[#11131A] hover:bg-white/5 text-[#F8FAFC] border-white/10 hover:border-[#7C3AED]/50' 
                     : 'bg-white hover:bg-slate-100 text-[#0F172A] border-[#E2E8F0] shadow-sm'
                 }`}
-                title="Sao chép địa chỉ Email"
+                title={t.hero.copyEmail}
               >
                 <Mail className="w-3.5 h-3.5 text-[#7C3AED]" />
                 <span>{profile.email}</span>
@@ -208,7 +221,7 @@ export const HeroBio: React.FC<HeroBioProps> = ({ profile, darkMode, onOpenEdito
                     ? 'bg-[#11131A] hover:bg-white/5 text-[#F8FAFC] border-white/10 hover:border-[#2563EB]/50' 
                     : 'bg-white hover:bg-slate-100 text-[#0F172A] border-[#E2E8F0] shadow-sm'
                 }`}
-                title="Sao chép số điện thoại"
+                title={t.hero.copyPhone}
               >
                 <Phone className="w-3.5 h-3.5 text-[#2563EB]" />
                 <span>{profile.phone}</span>
@@ -296,62 +309,129 @@ export const HeroBio: React.FC<HeroBioProps> = ({ profile, darkMode, onOpenEdito
                 </div>
               </div>
 
-              {/* 4 Core Value Metric Highlights */}
+              {/* 4 Core Value Metric Highlights (Interactive Filter & Jump) */}
               <div className="grid grid-cols-2 gap-3 mb-6">
                 
-                <div className={`p-4 rounded-2xl border transition-all ${
-                  darkMode ? 'bg-[#08090D] border-white/10' : 'bg-slate-50 border-[#E2E8F0]'
-                }`}>
-                  <div className="flex items-center gap-1.5 text-[#7C3AED] mb-1">
-                    <Sparkles className="w-3.5 h-3.5" />
-                    <span className="text-[10px] font-bold uppercase tracking-[0.2em]">Kinh nghiệm</span>
+                {/* 1. Kinh nghiệm / Experience -> Cuộn đến Lộ trình làm việc (#experience) */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (onSelectExperienceTab) onSelectExperienceTab('work');
+                    const el = document.getElementById('experience');
+                    if (el) {
+                      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                  }}
+                  className={`p-4 rounded-2xl border text-left transition-all cursor-pointer group relative overflow-hidden focus:outline-none ${
+                    darkMode 
+                      ? 'bg-[#08090D] hover:bg-[#7C3AED]/10 border-white/10 hover:border-[#7C3AED]/50 text-[#F8FAFC]' 
+                      : 'bg-slate-50 hover:bg-purple-50/60 border-[#E2E8F0] hover:border-purple-300 text-[#0F172A]'
+                  }`}
+                  title="Nhấn để xem toàn bộ chi tiết kinh nghiệm công tác"
+                >
+                  <div className="flex items-center justify-between mb-1">
+                    <div className="flex items-center gap-1.5 text-[#7C3AED]">
+                      <Sparkles className="w-3.5 h-3.5" />
+                      <span className="text-[10px] font-bold uppercase tracking-[0.2em]">{t.hero.yearsExpSub}</span>
+                    </div>
+                    <ArrowRight className="w-3.5 h-3.5 text-[#7C3AED] opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
                   </div>
-                  <div className="text-2xl font-bold text-gradient-tech">{profile.yearsOfExperience}+ Năm</div>
-                  <p className="text-[11px] text-[#94A3B8]">Kinh tế Xây dựng & AI</p>
-                </div>
+                  <div className="text-2xl font-bold text-gradient-tech">{profile.yearsOfExperience}+ {t.hero.yearsExp.split(' ')[1] || 'Năm'}</div>
+                  <p className="text-[11px] text-[#94A3B8] group-hover:text-[#A78BFA] transition-colors">Kinh nghiệm & Lộ trình →</p>
+                </button>
 
-                <div className={`p-4 rounded-2xl border transition-all ${
-                  darkMode ? 'bg-[#08090D] border-white/10' : 'bg-slate-50 border-[#E2E8F0]'
-                }`}>
-                  <div className="flex items-center gap-1.5 text-[#2563EB] mb-1">
-                    <Building2 className="w-3.5 h-3.5" />
-                    <span className="text-[10px] font-bold uppercase tracking-[0.2em]">Chủ Đầu Tư</span>
+                {/* 2. Doanh nghiệp / Enterprises -> Lọc danh sách công ty tập đoàn */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (onSelectExperienceTab) onSelectExperienceTab('work');
+                    const el = document.getElementById('experience');
+                    if (el) {
+                      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                  }}
+                  className={`p-4 rounded-2xl border text-left transition-all cursor-pointer group relative overflow-hidden focus:outline-none ${
+                    darkMode 
+                      ? 'bg-[#08090D] hover:bg-[#2563EB]/10 border-white/10 hover:border-[#2563EB]/50 text-[#F8FAFC]' 
+                      : 'bg-slate-50 hover:bg-blue-50/60 border-[#E2E8F0] hover:border-blue-300 text-[#0F172A]'
+                  }`}
+                  title="Nhấn để xem các tập đoàn và doanh nghiệp đã công tác"
+                >
+                  <div className="flex items-center justify-between mb-1">
+                    <div className="flex items-center gap-1.5 text-[#2563EB]">
+                      <Building2 className="w-3.5 h-3.5" />
+                      <span className="text-[10px] font-bold uppercase tracking-[0.2em]">Enterprises</span>
+                    </div>
+                    <ArrowRight className="w-3.5 h-3.5 text-[#2563EB] opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
                   </div>
-                  <div className="text-2xl font-bold text-gradient-tech">5+ Doanh nghiệp</div>
-                  <p className="text-[11px] text-[#94A3B8]">Vinhomes, Phú Điền, 36</p>
-                </div>
+                  <div className="text-2xl font-bold text-gradient-tech">{(profile.experiences || []).length || 5}+ Firms</div>
+                  <p className="text-[11px] text-[#94A3B8] group-hover:text-[#60A5FA] transition-colors">Vinhomes, Phú Diễn, 36 →</p>
+                </button>
 
-                <div className={`p-4 rounded-2xl border transition-all ${
-                  darkMode ? 'bg-[#08090D] border-white/10' : 'bg-slate-50 border-[#E2E8F0]'
-                }`}>
-                  <div className="flex items-center gap-1.5 text-[#7C3AED] mb-1">
-                    <Layers className="w-3.5 h-3.5" />
-                    <span className="text-[10px] font-bold uppercase tracking-[0.2em]">Ứng dụng Web</span>
+                {/* 3. Sản phẩm Web Apps -> Lọc toàn bộ Web Apps đã triển khai */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (onSelectCategory) onSelectCategory('All');
+                    const el = document.getElementById('projects');
+                    if (el) {
+                      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                  }}
+                  className={`p-4 rounded-2xl border text-left transition-all cursor-pointer group relative overflow-hidden focus:outline-none ${
+                    darkMode 
+                      ? 'bg-[#08090D] hover:bg-[#7C3AED]/10 border-white/10 hover:border-[#7C3AED]/50 text-[#F8FAFC]' 
+                      : 'bg-slate-50 hover:bg-purple-50/60 border-[#E2E8F0] hover:border-purple-300 text-[#0F172A]'
+                  }`}
+                  title="Nhấn để lọc danh sách các giải pháp Web App thực tế"
+                >
+                  <div className="flex items-center justify-between mb-1">
+                    <div className="flex items-center gap-1.5 text-[#7C3AED]">
+                      <Layers className="w-3.5 h-3.5" />
+                      <span className="text-[10px] font-bold uppercase tracking-[0.2em]">{t.hero.projectsDoneSub}</span>
+                    </div>
+                    <ArrowRight className="w-3.5 h-3.5 text-[#7C3AED] opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
                   </div>
                   <div className="text-2xl font-bold text-gradient-tech">{profile.projects.length}+ Web Apps</div>
-                  <p className="text-[11px] text-[#94A3B8]">Quản lý Chi phí & AI</p>
-                </div>
+                  <p className="text-[11px] text-[#94A3B8] group-hover:text-[#A78BFA] transition-colors">Xem kho Web App trực tiếp →</p>
+                </button>
 
-                <div className={`p-4 rounded-2xl border transition-all ${
-                  darkMode ? 'bg-[#08090D] border-white/10' : 'bg-slate-50 border-[#E2E8F0]'
-                }`}>
-                  <div className="flex items-center gap-1.5 text-[#2563EB] mb-1">
-                    <Cpu className="w-3.5 h-3.5" />
-                    <span className="text-[10px] font-bold uppercase tracking-[0.2em]">Công nghệ</span>
+                {/* 4. Công cụ & Tech Stack -> Cuộn đến Ma trận kỹ năng & Công cụ chuyên ngành */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    const el = document.getElementById('skills');
+                    if (el) {
+                      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                  }}
+                  className={`p-4 rounded-2xl border text-left transition-all cursor-pointer group relative overflow-hidden focus:outline-none ${
+                    darkMode 
+                      ? 'bg-[#08090D] hover:bg-[#2563EB]/10 border-white/10 hover:border-[#2563EB]/50 text-[#F8FAFC]' 
+                      : 'bg-slate-50 hover:bg-blue-50/60 border-[#E2E8F0] hover:border-blue-300 text-[#0F172A]'
+                  }`}
+                  title="Nhấn để xem bảng ma trận năng lực công nghệ & phần mềm"
+                >
+                  <div className="flex items-center justify-between mb-1">
+                    <div className="flex items-center gap-1.5 text-[#2563EB]">
+                      <Cpu className="w-3.5 h-3.5" />
+                      <span className="text-[10px] font-bold uppercase tracking-[0.2em]">Tech Stack</span>
+                    </div>
+                    <ArrowRight className="w-3.5 h-3.5 text-[#2563EB] opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
                   </div>
-                  <div className="text-2xl font-bold text-gradient-tech">10+ Công cụ</div>
-                  <p className="text-[11px] text-[#94A3B8]">G8/F1, SAP, Power BI, AI</p>
-                </div>
+                  <div className="text-2xl font-bold text-gradient-tech">10+ Tools</div>
+                  <p className="text-[11px] text-[#94A3B8] group-hover:text-[#60A5FA] transition-colors">G8/F1, SAP, Power BI, AI →</p>
+                </button>
               </div>
 
               {/* Verified Skills Summary */}
               <div className="pt-4 border-t border-white/10">
                 <div className="flex items-center justify-between text-xs mb-2.5">
                   <span className="uppercase tracking-[0.15em] font-mono text-[#A78BFA] font-semibold">
-                    Thế mạnh cốt lõi
+                    {t.hero.specialtiesTitle}
                   </span>
                   <span className="font-mono text-emerald-400 flex items-center gap-1 text-[11px]">
-                    <CheckCircle2 className="w-3.5 h-3.5" /> 100% Đã kiểm chứng
+                    <CheckCircle2 className="w-3.5 h-3.5" /> 100% Verified
                   </span>
                 </div>
                 

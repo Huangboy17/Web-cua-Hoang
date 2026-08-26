@@ -1,30 +1,33 @@
 import React from 'react';
-import { Zap, Database, Cpu, CheckCircle2, Sparkles, FileSpreadsheet, ArrowRight } from 'lucide-react';
+import { Zap, Database, Cpu, Sparkles, FileSpreadsheet } from 'lucide-react';
+import { useLanguage } from '../../i18n/LanguageContext';
 
 interface DifferentiatorCardProps {
   darkMode: boolean;
 }
 
 export const DifferentiatorCard: React.FC<DifferentiatorCardProps> = ({ darkMode }) => {
+  const { t } = useLanguage();
+
   const pillars = [
     {
-      title: 'Chuẩn Hóa Dữ Liệu & Định Mức',
-      desc: 'Số hóa cơ sở dữ liệu định mức nội bộ doanh nghiệp & liên kết dữ liệu G8/F1 phục vụ tra cứu tức thì.',
+      title: t.skills.diffPillar1Title,
+      desc: t.skills.diffPillar1Desc,
       icon: Database
     },
     {
-      title: 'Tự Động Bóc Tách & Đối Soát',
-      desc: 'Ứng dụng LLM & OCR bóc tách bảng khối lượng, phát hiện sai lệch đơn giá dự toán trong vài giây.',
+      title: t.skills.diffPillar2Title,
+      desc: t.skills.diffPillar2Desc,
       icon: Cpu
     },
     {
-      title: 'Quản Trị Chi Phí Real-time',
-      desc: 'Theo dõi dòng tiền, kiểm soát hạn mức giải ngân và phân tích độ nhạy đầu tư (NPV, IRR) trực quan.',
+      title: t.skills.diffPillar3Title,
+      desc: t.skills.diffPillar3Desc,
       icon: FileSpreadsheet
     },
     {
-      title: 'Web Apps Chuyên Nghiệp',
-      desc: 'Tự chủ phát triển các phần mềm nội bộ chuyên ngành tối ưu chi phí & nâng cao năng suất cho Chủ Đầu Tư.',
+      title: t.skills.diffPillar4Title,
+      desc: t.skills.diffPillar4Desc,
       icon: Sparkles
     }
   ];
@@ -43,7 +46,7 @@ export const DifferentiatorCard: React.FC<DifferentiatorCardProps> = ({ darkMode
           {/* Badge */}
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold tracking-wider uppercase bg-purple-500/10 text-[#7C3AED] dark:text-[#A78BFA] border border-purple-400/20 mb-2.5">
             <Zap className="w-3.5 h-3.5 fill-current" />
-            <span>PROFESSIONAL DIFFERENTIATOR</span>
+            <span>{t.skills.diffBadge}</span>
           </div>
 
           {/* Headline */}
@@ -58,7 +61,7 @@ export const DifferentiatorCard: React.FC<DifferentiatorCardProps> = ({ darkMode
         <p className={`text-xs sm:text-sm font-normal max-w-xl leading-relaxed ${
           darkMode ? 'text-slate-300' : 'text-slate-600'
         }`}>
-          Ứng dụng AI, Data và Web App để chuẩn hóa dữ liệu, tự động hóa quy trình và nâng cao hiệu quả quản lý Chi phí – Hợp đồng – Báo cáo dự án.
+          {t.skills.diffDesc}
         </p>
       </div>
 

@@ -13,24 +13,47 @@ import {
 } from 'lucide-react';
 import { ProjectApp } from '../types';
 import { ProjectModal } from './ProjectModal';
+import { useLanguage } from '../i18n/LanguageContext';
+import { trackEvent } from '../services/analytics';
 
 interface ProjectShowcaseProps {
   projects: ProjectApp[];
   darkMode: boolean;
   onOpenEditor: () => void;
   isAdmin?: boolean;
+  selectedCategory?: string;
+  onCategoryChange?: (category: string) => void;
+  searchQuery?: string;
+  onSearchChange?: (query: string) => void;
 }
 
 export const ProjectShowcase: React.FC<ProjectShowcaseProps> = ({
   projects,
   darkMode,
   onOpenEditor,
-  isAdmin = false
+  isAdmin = false,
+  selectedCategory: controlledCategory,
+  onCategoryChange,
+  searchQuery: controlledSearch,
+  onSearchChange
 }) => {
-  const [selectedCategory, setSelectedCategory] = useState<string>('All');
-  const [searchQuery, setSearchQuery] = useState<string>('');
+  const { t } = useLanguage();
+  const [internalCategory, setInternalCategory] = useState<string>('All');
+  const [internalSearchQuery, setInternalSearchQuery] = useState<string>('');
   const [activeProject, setActiveProject] = useState<ProjectApp | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+
+  const selectedCategory = controlledCategory !== undefined ? controlledCategory : internalCategory;
+  const setSelectedCategory = (cat: string) => {
+    if (onCategoryChange) onCategoryChange(cat);
+    setInternalCategory(cat);
+  };
+
+  const searchQuery = controlledSearch !== undefined ? controlledSearch : internalSearchQuery;
+  const setSearchQuery = (q: string) => {
+    if (onSearchChange) onSearchChange(q);
+    setInternalSearchQuery(q);
+  };
 
   const categories = ['All', 'SaaS', 'E-commerce', 'AI & Tech', 'Fullstack', 'Tools'];
 
@@ -51,10 +74,11 @@ export const ProjectShowcase: React.FC<ProjectShowcaseProps> = ({
     });
   }, [projects, selectedCategory, searchQuery, isAdmin]);
 
-  const handleCopyUrl = (e: React.MouseEvent, url: string, id: string) => {
+  const handleCopyUrl = (e: React.MouseEvent, url: string, id: string, projectTitle?: string) => {
     e.stopPropagation();
     navigator.clipboard.writeText(url);
     setCopiedId(id);
+    trackEvent('copy_demo_credential', `Copy tài khoản Demo: ${projectTitle || id}`);
     setTimeout(() => setCopiedId(null), 2000);
   };
 
@@ -78,23 +102,17 @@ export const ProjectShowcase: React.FC<ProjectShowcaseProps> = ({
               : 'bg-purple-50 text-[#7C3AED] border-purple-200'
           }`}>
             <Flame className="w-4 h-4 text-[#A78BFA]" />
-            <span className="uppercase tracking-[0.2em]">Sản Phẩm Tiêu Biểu (Live Products)</span>
+            <span className="uppercase tracking-[0.2em]">{t.projects.badge}</span>
           </div>
 
-          <h2 className="text-3xl sm:text-5xl font-bold tracking-tight mb-4">
-            Dự Án Web App <span className="text-gradient-tech">Thực Tế</span>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-3 whitespace-nowrap">
+            {t.projects.title} <span className="text-gradient-tech">{t.projects.titleHighlight}</span>
           </h2>
 
           <p className={`text-sm sm:text-base leading-relaxed mb-6 font-normal ${
             darkMode ? 'text-[#94A3B8]' : 'text-[#64748B]'
           }`}>
-            Nhấn trực tiếp vào thẻ dự án hoặc nút 
-            <span className={`inline-block mx-1.5 px-2.5 py-0.5 rounded-full font-mono text-xs border ${
-              darkMode ? 'bg-[#7C3AED]/20 text-[#A78BFA] border-[#7C3AED]/40' : 'bg-blue-50 text-[#2563EB] border-blue-200'
-            }`}>
-              🚀 Mở Web App Trực Tiếp
-            </span> 
-            để trải nghiệm sản phẩm trực tiếp trên môi trường Live Production.
+            {t.projects.subtitle}
           </p>
 
           {/* Quick Notice Banner for Recruiters */}
@@ -106,7 +124,7 @@ export const ProjectShowcase: React.FC<ProjectShowcaseProps> = ({
             <div className="flex items-start gap-2.5">
               <Sparkles className="w-4 h-4 text-[#7C3AED] shrink-0 mt-0.5" />
               <span>
-                <strong className={darkMode ? 'text-[#F8FAFC]' : 'text-[#0F172A]'}>Kiểm tra UX & Mã Nguồn:</strong> Mỗi sản phẩm đều được tối ưu hiệu năng cao, responsive trên mọi thiết bị và có sẵn tài khoản mẫu (Demo Account).
+                <strong className={darkMode ? 'text-[#F8FAFC]' : 'text-[#0F172A]'}>UX & Quality:</strong> {t.projects.qualityNote}
               </span>
             </div>
             <button
@@ -117,7 +135,7 @@ export const ProjectShowcase: React.FC<ProjectShowcaseProps> = ({
                   : 'bg-slate-100 hover:bg-slate-200 text-[#0F172A] border-[#E2E8F0] shadow-sm'
               }`}
             >
-              + Quản Lý Danh Sách App
+              + {t.nav.cms}
             </button>
           </div>
 
@@ -130,6 +148,7 @@ export const ProjectShowcase: React.FC<ProjectShowcaseProps> = ({
           <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 scrollbar-none">
             {categories.map((cat) => {
               const isActive = selectedCategory === cat;
+              const label = cat === 'All' ? t.projects.filterAll : cat;
               return (
                 <button
                   key={cat}
@@ -142,7 +161,7 @@ export const ProjectShowcase: React.FC<ProjectShowcaseProps> = ({
                         : 'bg-white hover:bg-slate-100 text-[#64748B] hover:text-[#0F172A] border border-[#E2E8F0]'
                   }`}
                 >
-                  {cat === 'All' ? 'Tất Cả Dự Án' : cat}
+                  {label}
                 </button>
               );
             })}
@@ -156,7 +175,7 @@ export const ProjectShowcase: React.FC<ProjectShowcaseProps> = ({
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Tìm theo từ khóa (React, AI, SAP, ERP...)"
+              placeholder={t.projects.searchPlaceholder}
               className={`w-full pl-10 pr-4 py-2 rounded-full text-xs sm:text-sm border focus:outline-none transition-all ${
                 darkMode 
                   ? 'bg-[#11131A] border-white/10 text-[#F8FAFC] placeholder-[#94A3B8]/60 focus:border-[#7C3AED]' 
@@ -181,8 +200,8 @@ export const ProjectShowcase: React.FC<ProjectShowcaseProps> = ({
             darkMode ? 'bg-[#11131A] border-white/10 text-[#94A3B8]' : 'bg-white border-[#E2E8F0] text-[#64748B]'
           }`}>
             <Layers className="w-12 h-12 text-[#7C3AED]/40 mx-auto mb-3" />
-            <p className="text-base font-medium">Không tìm thấy dự án phù hợp với từ khóa</p>
-            <p className="text-xs text-[#94A3B8]/70 mt-1">Thử chọn danh mục khác hoặc xóa bộ lọc tìm kiếm</p>
+            <p className="text-base font-medium">{t.projects.noProjects}</p>
+            <p className="text-xs text-[#94A3B8]/70 mt-1">{t.projects.noProjectsSub}</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -213,7 +232,7 @@ export const ProjectShowcase: React.FC<ProjectShowcaseProps> = ({
                   <div className="flex items-center gap-2">
                     {project.published === false && (
                       <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-500/20 text-amber-300 border border-amber-500/40">
-                        Bản nháp
+                        {t.projects.draftBadge}
                       </span>
                     )}
 
@@ -221,12 +240,12 @@ export const ProjectShowcase: React.FC<ProjectShowcaseProps> = ({
                       darkMode ? 'bg-[#7C3AED]/15 text-[#A78BFA] border-[#7C3AED]/40' : 'bg-purple-50 text-[#7C3AED] border-purple-200'
                     }`}>
                       <span className="w-1.5 h-1.5 rounded-full bg-[#7C3AED] animate-pulse" />
-                      Live App
+                      {t.projects.liveBadge}
                     </span>
 
                     <button
                       onClick={(e) => handleCopyUrl(e, project.liveUrl, project.id)}
-                      title="Sao chép link Web App"
+                      title={t.projects.copyLink}
                       className={`p-1 rounded hover:bg-white/10 transition-colors ${
                         copiedId === project.id ? 'text-[#7C3AED]' : 'text-[#94A3B8] hover:text-white'
                       }`}
@@ -256,7 +275,7 @@ export const ProjectShowcase: React.FC<ProjectShowcaseProps> = ({
                     </span>
                     {project.featured && (
                       <span className="px-2.5 py-1 rounded-full text-[10px] uppercase tracking-wider font-semibold bg-gradient-to-r from-[#7C3AED] to-[#2563EB] text-white shadow flex items-center gap-1">
-                        <Sparkles className="w-3 h-3" /> Nổi Bật
+                        <Sparkles className="w-3 h-3" /> {t.projects.featured}
                       </span>
                     )}
                   </div>
@@ -269,19 +288,23 @@ export const ProjectShowcase: React.FC<ProjectShowcaseProps> = ({
                       href={project.liveUrl}
                       target="_blank"
                       rel="noopener noreferrer"
+                      onClick={() => trackEvent('click_project_demo', `Mở Live App: ${project.title}`)}
                       className="px-5 py-2.5 rounded-full font-semibold text-xs uppercase tracking-wider text-white bg-gradient-to-r from-[#7C3AED] to-[#2563EB] hover:from-[#6D28D9] hover:to-[#1D4ED8] shadow-xl shadow-purple-500/25 flex items-center gap-2 transform hover:scale-105 transition-all"
                     >
                       <ExternalLink className="w-4 h-4" />
-                      <span>Mở Web App Ngay 🚀</span>
+                      <span>{t.projects.openLiveDirect} 🚀</span>
                     </a>
 
                     {/* Quick view button */}
                     <button
-                      onClick={() => setActiveProject(project)}
+                      onClick={() => {
+                        setActiveProject(project);
+                        trackEvent('view_project_modal', `Xem chi tiết dự án: ${project.title}`);
+                      }}
                       className="px-4 py-2.5 rounded-full font-semibold text-xs uppercase tracking-wider text-white bg-white/10 hover:bg-white/20 border border-white/20 flex items-center gap-1.5 transition-all"
                     >
                       <Info className="w-3.5 h-3.5 text-[#A78BFA]" />
-                      <span>Chi Tiết</span>
+                      <span>{t.projects.viewDetails}</span>
                     </button>
                   </div>
 
@@ -317,23 +340,48 @@ export const ProjectShowcase: React.FC<ProjectShowcaseProps> = ({
 
                     {/* Demo Account Indicator for NTD (if any) */}
                     {project.demoAccount && (
-                      <div className={`p-2.5 rounded-xl border text-xs mb-4 flex items-center justify-between ${
+                      <div className={`p-2.5 rounded-xl border text-xs mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2 ${
                         darkMode 
                           ? 'bg-[#08090D] border-white/10 text-[#F8FAFC]/90' 
                           : 'bg-slate-50 border-[#E2E8F0] text-[#0F172A]'
                       }`}>
-                        <div className="flex items-center gap-1.5 truncate">
-                          <KeyRound className="w-3.5 h-3.5 text-[#7C3AED] shrink-0" />
-                          <span className="truncate">
-                            Demo: <strong className="text-[#A78BFA] font-mono">{project.demoAccount.username}</strong>
-                          </span>
+                        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[11px] sm:text-xs">
+                          <div className="flex items-center gap-1.5">
+                            <KeyRound className="w-3.5 h-3.5 text-[#7C3AED] shrink-0" />
+                            <span className="text-[#94A3B8]">{t.projectModal?.usernameLabel || 'ID'}:</span>
+                            <strong className="text-[#A78BFA] font-bold">{project.demoAccount.username}</strong>
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-[#94A3B8]">{t.projectModal?.passwordLabel || 'Pass'}:</span>
+                            <strong className="text-[#38BDF8] font-bold">{project.demoAccount.password}</strong>
+                          </div>
                         </div>
-                        <button
-                          onClick={() => setActiveProject(project)}
-                          className="text-[11px] uppercase tracking-wider font-semibold text-[#2563EB] hover:text-[#7C3AED] underline shrink-0 ml-2"
-                        >
-                          Xem Pass
-                        </button>
+
+                        <div className="flex items-center gap-1.5 shrink-0 self-end sm:self-auto">
+                          <button
+                            onClick={(e) => handleCopyUrl(e, `${project.demoAccount?.username} / ${project.demoAccount?.password}`, `cred-${project.id}`)}
+                            title="Copy Account"
+                            className={`px-2 py-1 rounded-md text-[10px] font-mono font-medium border flex items-center gap-1 transition-colors ${
+                              copiedId === `cred-${project.id}`
+                                ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
+                                : darkMode
+                                  ? 'bg-white/5 hover:bg-white/10 text-[#94A3B8] hover:text-white border-white/10'
+                                  : 'bg-white hover:bg-slate-100 text-slate-600 border-slate-200'
+                            }`}
+                          >
+                            {copiedId === `cred-${project.id}` ? (
+                              <>
+                                <Check className="w-3 h-3 text-emerald-400" />
+                                <span>Copied</span>
+                              </>
+                            ) : (
+                              <>
+                                <Copy className="w-3 h-3" />
+                                <span>Copy</span>
+                              </>
+                            )}
+                          </button>
+                        </div>
                       </div>
                     )}
 
@@ -363,24 +411,28 @@ export const ProjectShowcase: React.FC<ProjectShowcaseProps> = ({
                       href={project.liveUrl}
                       target="_blank"
                       rel="noopener noreferrer"
+                      onClick={() => trackEvent('click_project_demo', `Mở Live App: ${project.title}`)}
                       className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-full font-semibold text-xs uppercase tracking-wider text-white bg-gradient-to-r from-[#7C3AED] to-[#2563EB] hover:from-[#6D28D9] hover:to-[#1D4ED8] shadow-md shadow-purple-500/20 transition-all hover:scale-[1.02]"
                     >
                       <ExternalLink className="w-3.5 h-3.5" />
-                      <span>Mở Web App Trực Tiếp</span>
+                      <span>{t.projects.openLiveDirect}</span>
                     </a>
 
                     {/* Detail Modal Button */}
                     <button
                       id={`btn-detail-${project.id}`}
-                      onClick={() => setActiveProject(project)}
-                      title="Xem chi tiết tính năng & tài khoản test"
+                      onClick={() => {
+                        setActiveProject(project);
+                        trackEvent('view_project_modal', `Xem chi tiết dự án: ${project.title}`);
+                      }}
+                      title={t.projects.viewDetails}
                       className={`px-3.5 py-2.5 rounded-full text-xs uppercase tracking-wider font-semibold border transition-all ${
                         darkMode 
                           ? 'bg-white/5 hover:bg-white/10 text-[#F8FAFC] border-white/10 hover:border-[#7C3AED]' 
                           : 'bg-slate-100 hover:bg-slate-200 text-[#0F172A] border-[#E2E8F0]'
                       }`}
                     >
-                      Chi Tiết
+                      {t.projects.viewDetails}
                     </button>
 
                     {/* GitHub repo if available */}
@@ -389,12 +441,13 @@ export const ProjectShowcase: React.FC<ProjectShowcaseProps> = ({
                         href={project.githubUrl}
                         target="_blank"
                         rel="noopener noreferrer"
+                        onClick={() => trackEvent('click_github_repo', `Xem GitHub repo: ${project.title}`)}
                         className={`p-2.5 rounded-full border transition-all ${
                           darkMode 
                             ? 'bg-white/5 hover:bg-[#7C3AED]/20 text-[#94A3B8] border-white/10 hover:text-white hover:border-[#7C3AED]' 
                             : 'bg-slate-100 hover:bg-purple-50 text-[#64748B] hover:text-[#7C3AED] border-[#E2E8F0]'
                         }`}
-                        title="Xem mã nguồn trên GitHub"
+                        title={t.projects.viewGitHub}
                       >
                         <Github className="w-4 h-4" />
                       </a>

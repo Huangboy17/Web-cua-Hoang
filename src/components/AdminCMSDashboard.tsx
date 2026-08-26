@@ -30,7 +30,9 @@ import {
   Lock,
   Archive,
   Inbox,
-  CheckCircle2
+  CheckCircle2,
+  Activity,
+  Users
 } from 'lucide-react';
 import { User } from 'firebase/auth';
 import { 
@@ -54,6 +56,7 @@ import {
 import { DEFAULT_PROFILE } from '../data/defaultData';
 import { AvatarUploader } from './AvatarUploader';
 import { ExportCVModal } from './ExportCVModal';
+import { VisitorAnalyticsDashboard } from './VisitorAnalyticsDashboard';
 
 interface AdminCMSDashboardProps {
   profile: UserProfile;
@@ -65,7 +68,7 @@ interface AdminCMSDashboardProps {
   onToggleDarkMode: () => void;
 }
 
-type CMSTab = 'overview' | 'messages' | 'products' | 'experience' | 'general' | 'skills' | 'credentials' | 'settings';
+type CMSTab = 'overview' | 'analytics' | 'messages' | 'products' | 'experience' | 'general' | 'skills' | 'credentials' | 'settings';
 
 export const AdminCMSDashboard: React.FC<AdminCMSDashboardProps> = ({
   profile,
@@ -361,6 +364,23 @@ export const AdminCMSDashboard: React.FC<AdminCMSDashboardProps> = ({
             </button>
 
             <button
+              onClick={() => setActiveTab('analytics')}
+              className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+                activeTab === 'analytics'
+                  ? 'bg-gradient-to-r from-[#7C3AED]/20 to-[#2563EB]/20 text-[#A78BFA] border border-[#7C3AED]/40'
+                  : 'text-[#94A3B8] hover:bg-white/5 hover:text-white'
+              }`}
+            >
+              <div className="flex items-center gap-2.5">
+                <Activity className="w-4 h-4 text-emerald-400" />
+                <span>Lượt Truy Cập & Khách</span>
+              </div>
+              <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-500/20 text-emerald-400">
+                LIVE
+              </span>
+            </button>
+
+            <button
               onClick={() => setActiveTab('messages')}
               className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all ${
                 activeTab === 'messages'
@@ -485,6 +505,23 @@ export const AdminCMSDashboard: React.FC<AdminCMSDashboardProps> = ({
 
               {/* Metric Cards Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div 
+                  onClick={() => setActiveTab('analytics')}
+                  className="p-5 rounded-2xl bg-[#11131A] border border-white/10 hover:border-emerald-500/40 cursor-pointer transition-all group"
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-xs uppercase font-mono text-[#94A3B8] group-hover:text-emerald-400 transition-colors">Lượt Xem & Khách</span>
+                    <Activity className="w-5 h-5 text-emerald-400" />
+                  </div>
+                  <div className="text-2xl font-bold text-white font-mono flex items-center gap-2">
+                    <span>Thời Gian Thực</span>
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+                  </div>
+                  <div className="text-[11px] text-emerald-400 mt-2 flex items-center gap-1">
+                    <span>Xem vị trí, thiết bị & hành vi →</span>
+                  </div>
+                </div>
+
                 <div className="p-5 rounded-2xl bg-[#11131A] border border-white/10">
                   <div className="flex items-center justify-between mb-3">
                     <span className="text-xs uppercase font-mono text-[#94A3B8]">Tổng Web Apps</span>
@@ -522,17 +559,6 @@ export const AdminCMSDashboard: React.FC<AdminCMSDashboardProps> = ({
                   <div className="text-[11px] text-[#94A3B8] mt-2">
                     {formData.yearsOfExperience} năm kinh nghiệm thực chiến
                   </div>
-                </div>
-
-                <div className="p-5 rounded-2xl bg-[#11131A] border border-white/10">
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-xs uppercase font-mono text-[#94A3B8]">Trạng Thái Cloud</span>
-                    <ShieldCheck className="w-5 h-5 text-emerald-400" />
-                  </div>
-                  <div className="text-sm font-bold text-emerald-400 font-mono mt-1">Đồng Bộ Trực Tiếp</div>
-                  <p className="text-[11px] text-[#94A3B8] mt-2">
-                    Google Firestore DB
-                  </p>
                 </div>
               </div>
 
@@ -614,6 +640,13 @@ export const AdminCMSDashboard: React.FC<AdminCMSDashboardProps> = ({
                   )}
                 </div>
               </div>
+            </div>
+          )}
+
+          {/* TAB: VISITOR TRACKING & ANALYTICS */}
+          {activeTab === 'analytics' && (
+            <div className="max-w-6xl">
+              <VisitorAnalyticsDashboard darkMode={darkMode} />
             </div>
           )}
 

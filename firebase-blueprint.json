@@ -1,0 +1,65 @@
+{
+  "entities": {
+    "VisitorLog": {
+      "title": "VisitorLog",
+      "description": "Represents a single website visitor session including timestamp, location, device, and interactions.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "visitorId": { "type": "string" },
+        "sessionId": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "ip": { "type": "string" },
+        "city": { "type": "string" },
+        "country": { "type": "string" },
+        "countryCode": { "type": "string" },
+        "device": { "type": "string" },
+        "browser": { "type": "string" },
+        "os": { "type": "string" },
+        "screenResolution": { "type": "string" },
+        "referrer": { "type": "string" },
+        "language": { "type": "string" },
+        "durationSeconds": { "type": "number" },
+        "lastActive": { "type": "string" }
+      },
+      "required": ["sessionId", "timestamp"]
+    },
+    "ContactMessage": {
+      "title": "ContactMessage",
+      "description": "User submitted contact message",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "message": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "status": { "type": "string" }
+      },
+      "required": ["name", "email", "message"]
+    },
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Main portfolio profile configuration",
+      "type": "object",
+      "properties": {
+        "fullName": { "type": "string" },
+        "title": { "type": "string" }
+      },
+      "required": ["fullName", "title"]
+    }
+  },
+  "firestore": {
+    "/visitor_logs/{logId}": {
+      "schema": "VisitorLog",
+      "description": "Collection of visitor sessions and interaction analytics"
+    },
+    "/contact_messages/{messageId}": {
+      "schema": "ContactMessage",
+      "description": "Contact form submissions"
+    },
+    "/portfolio_settings/{docId}": {
+      "schema": "UserProfile",
+      "description": "Public portfolio profile and settings"
+    }
+  }
+}

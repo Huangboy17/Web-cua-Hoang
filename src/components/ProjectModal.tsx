@@ -15,6 +15,7 @@ import {
   ShieldCheck 
 } from 'lucide-react';
 import { ProjectApp } from '../types';
+import { useLanguage } from '../i18n/LanguageContext';
 
 interface ProjectModalProps {
   project: ProjectApp | null;
@@ -23,6 +24,7 @@ interface ProjectModalProps {
 }
 
 export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose, darkMode }) => {
+  const { t } = useLanguage();
   const [copiedUrl, setCopiedUrl] = useState(false);
   const [copiedUser, setCopiedUser] = useState(false);
   const [copiedPass, setCopiedPass] = useState(false);
@@ -66,7 +68,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose, da
               ? 'bg-[#08090D]/80 hover:bg-white/10 text-white/80 border-white/10 hover:text-white' 
               : 'bg-white/80 hover:bg-slate-100 text-[#0F172A] border-[#E2E8F0] shadow-sm'
           }`}
-          title="Đóng cửa sổ"
+          title={t.projectModal.closeModal}
         >
           <X className="w-5 h-5" />
         </button>
@@ -94,7 +96,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose, da
               <span className={`text-[10px] uppercase font-bold tracking-wider px-2.5 py-0.5 rounded-full border ${
                 darkMode ? 'bg-[#7C3AED]/20 text-[#A78BFA] border-[#7C3AED]/40' : 'bg-purple-50 text-[#7C3AED] border-purple-200'
               }`}>
-                Live App
+                {t.projectModal.liveAppBadge}
               </span>
             </div>
           </div>
@@ -115,7 +117,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose, da
                   {project.category}
                 </span>
                 <span className="px-3 py-1 rounded-full text-xs font-mono bg-[#08090D]/60 backdrop-blur-md text-white/80 border border-white/10">
-                  Năm {project.completionYear}
+                  {t.projectModal.yearLabel} {project.completionYear}
                 </span>
               </div>
 
@@ -128,7 +130,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose, da
                 className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-semibold text-xs uppercase tracking-wider text-white bg-gradient-to-r from-[#7C3AED] to-[#2563EB] hover:from-[#6D28D9] hover:to-[#1D4ED8] shadow-xl shadow-purple-500/25 transition-all hover:scale-105"
               >
                 <ExternalLink className="w-4 h-4" />
-                <span>Truy Cập Web App Ngay 🚀</span>
+                <span>{t.projectModal.openWebAppNow}</span>
               </a>
             </div>
           </div>
@@ -155,10 +157,10 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose, da
             }`}>
               <div className="flex items-center gap-2 font-bold text-xs uppercase tracking-wider mb-2 text-[#7C3AED]">
                 <KeyRound className="w-4 h-4" />
-                <span>Tài Khoản Mẫu Trải Nghiệm Thử:</span>
+                <span>{t.projectModal.demoAccountTitle}</span>
               </div>
               <p className={`text-xs mb-3 ${darkMode ? 'text-[#94A3B8]' : 'text-[#64748B]'}`}>
-                {project.demoAccount.note || 'Sử dụng thông tin dưới đây để đăng nhập trực tiếp mà không cần đăng ký tài khoản mới:'}
+                {project.demoAccount.note || t.projectModal.demoAccountNote}
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -167,13 +169,13 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose, da
                   darkMode ? 'bg-[#11131A] border-white/10' : 'bg-white border-[#E2E8F0]'
                 }`}>
                   <div>
-                    <span className="text-[10px] uppercase font-mono text-[#94A3B8] block">Tài khoản / Email</span>
+                    <span className="text-[10px] uppercase font-mono text-[#94A3B8] block">{t.projectModal.usernameLabel}</span>
                     <span className="font-mono text-xs font-semibold text-[#A78BFA]">{project.demoAccount.username}</span>
                   </div>
                   <button
                     onClick={() => handleCopy(project.demoAccount!.username, 'user')}
                     className="p-1.5 rounded-lg hover:bg-white/10 transition-colors text-[#94A3B8] hover:text-white"
-                    title="Sao chép tài khoản"
+                    title={t.projectModal.usernameLabel}
                   >
                     {copiedUser ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
                   </button>
@@ -184,13 +186,13 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose, da
                   darkMode ? 'bg-[#11131A] border-white/10' : 'bg-white border-[#E2E8F0]'
                 }`}>
                   <div>
-                    <span className="text-[10px] uppercase font-mono text-[#94A3B8] block">Mật khẩu</span>
+                    <span className="text-[10px] uppercase font-mono text-[#94A3B8] block">{t.projectModal.passwordLabel}</span>
                     <span className="font-mono text-xs font-semibold text-[#2563EB]">{project.demoAccount.password}</span>
                   </div>
                   <button
                     onClick={() => handleCopy(project.demoAccount!.password, 'pass')}
                     className="p-1.5 rounded-lg hover:bg-white/10 transition-colors text-[#94A3B8] hover:text-white"
-                    title="Sao chép mật khẩu"
+                    title={t.projectModal.passwordLabel}
                   >
                     {copiedPass ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
                   </button>
@@ -202,7 +204,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose, da
           {/* Description */}
           <div>
             <h3 className="text-xs uppercase tracking-[0.2em] font-mono text-[#A78BFA] font-bold mb-2">
-              Tổng Quan & Vấn Đề Giải Quyết
+              {t.projectModal.overviewTitle}
             </h3>
             <p className={`text-sm leading-relaxed ${darkMode ? 'text-[#94A3B8]' : 'text-[#475569]'}`}>
               {project.description}
@@ -218,11 +220,11 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose, da
             }`}>
               <div className="flex items-center gap-2 text-xs uppercase tracking-wider font-semibold text-[#2563EB] mb-2">
                 <UserCheck className="w-4 h-4" />
-                <span>Vai Trò Trong Dự Án:</span>
+                <span>{t.projectModal.roleTitle}</span>
               </div>
               <p className="font-semibold text-sm mb-2">{project.role}</p>
               <p className={`text-xs leading-relaxed ${darkMode ? 'text-[#94A3B8]' : 'text-[#64748B]'}`}>
-                Trực tiếp thiết kế luồng người dùng (UX), kiến trúc cơ sở dữ liệu, tối ưu hóa các giải pháp kỹ thuật và triển khai trên môi trường Cloud / Serverless.
+                {t.projectModal.roleDesc}
               </p>
             </div>
 
@@ -232,7 +234,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose, da
             }`}>
               <div className="flex items-center gap-2 text-xs uppercase tracking-wider font-semibold text-[#7C3AED] mb-2">
                 <Zap className="w-4 h-4" />
-                <span>Tính Năng Nổi Bật:</span>
+                <span>{t.projectModal.featuresTitle}</span>
               </div>
               <ul className="space-y-1.5">
                 {(project.keyFeatures || []).map((feat, idx) => (
@@ -249,7 +251,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose, da
           {/* Tech Stack Chips */}
           <div>
             <h3 className="text-xs uppercase tracking-[0.2em] font-mono text-[#A78BFA] font-bold mb-2">
-              Công Nghệ & Thư Viện Sử Dụng
+              {t.projectModal.techStackTitle}
             </h3>
             <div className="flex flex-wrap gap-2">
               {(project.tags || []).map((tag) => (
@@ -280,12 +282,12 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose, da
                 {copiedUrl ? (
                   <>
                     <Check className="w-3.5 h-3.5 text-emerald-400" />
-                    <span className="text-emerald-400">Đã chép link Web App!</span>
+                    <span className="text-emerald-400">{t.projectModal.copiedLink}</span>
                   </>
                 ) : (
                   <>
                     <Copy className="w-3.5 h-3.5 text-[#7C3AED]" />
-                    <span>Sao chép Link Web App</span>
+                    <span>{t.projectModal.copyLinkBtn}</span>
                   </>
                 )}
               </button>
@@ -301,7 +303,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose, da
                   }`}
                 >
                   <Github className="w-3.5 h-3.5 text-[#7C3AED]" />
-                  <span>GitHub Repository</span>
+                  <span>{t.projectModal.githubRepo}</span>
                 </a>
               )}
             </div>
@@ -315,7 +317,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose, da
               className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full font-semibold text-xs uppercase tracking-wider text-white bg-gradient-to-r from-[#7C3AED] to-[#2563EB] hover:from-[#6D28D9] hover:to-[#1D4ED8] shadow-lg shadow-purple-500/25 transition-all hover:scale-105"
             >
               <ExternalLink className="w-4 h-4" />
-              <span>Mở Web App Trực Tiếp</span>
+              <span>{t.projectModal.openWebAppDirect}</span>
             </a>
           </div>
 
@@ -324,3 +326,4 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose, da
     </div>
   );
 };
+

@@ -1,11 +1,13 @@
 import React from 'react';
 import { Sparkles } from 'lucide-react';
+import { useLanguage } from '../../i18n/LanguageContext';
 
 interface SkillsHeroProps {
   darkMode: boolean;
 }
 
 export const SkillsHero: React.FC<SkillsHeroProps> = ({ darkMode }) => {
+  const { t } = useLanguage();
   return (
     <div className="flex flex-col items-center text-center max-w-3xl mx-auto mb-10 sm:mb-12">
       {/* Small Badge */}
@@ -17,16 +19,16 @@ export const SkillsHero: React.FC<SkillsHeroProps> = ({ darkMode }) => {
         }`}
       >
         <Sparkles className="w-3.5 h-3.5 text-[#A78BFA]" />
-        <span className="uppercase tracking-[0.18em]">✨ NĂNG LỰC CHUYÊN MÔN & CÔNG NGHỆ</span>
+        <span className="uppercase tracking-[0.18em]">{t.skills.badge}</span>
       </div>
 
       {/* Main Title */}
       <h2 className="text-3xl sm:text-4xl lg:text-[46px] font-extrabold tracking-tight leading-tight mb-4">
         <span className={darkMode ? 'text-[#F8FAFC]' : 'text-[#0F172A]'}>
-          Kỹ Năng &{' '}
+          {t.skills.title} &{' '}
         </span>
         <span className="bg-gradient-to-r from-[#7C3AED] via-[#6366F1] to-[#2563EB] bg-clip-text text-transparent">
-          Công Cụ Làm Việc
+          {t.skills.titleHighlight}
         </span>
       </h2>
 
@@ -34,7 +36,7 @@ export const SkillsHero: React.FC<SkillsHeroProps> = ({ darkMode }) => {
       <p className={`text-sm sm:text-base leading-relaxed font-normal max-w-2xl ${
         darkMode ? 'text-[#94A3B8]' : 'text-[#64748B]'
       }`}>
-        Kết hợp chuyên môn Kinh tế Xây dựng thực chiến với Quản lý Chi phí, Hợp đồng, Data và AI Automation.
+        {t.skills.subtitle}
       </p>
     </div>
   );

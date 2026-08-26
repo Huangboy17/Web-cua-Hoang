@@ -9,17 +9,19 @@ import {
   Bot, 
   Code2, 
   FileSpreadsheet, 
-  Workflow, 
   Terminal, 
   Layers, 
   Server
 } from 'lucide-react';
+import { useLanguage } from '../../i18n/LanguageContext';
 
 interface TechnologyStackProps {
   darkMode: boolean;
 }
 
 export const TechnologyStack: React.FC<TechnologyStackProps> = ({ darkMode }) => {
+  const { t } = useLanguage();
+
   const tools = [
     { name: 'G8 / F1 (Dự toán)', icon: Calculator },
     { name: 'SAP ERP (PS & CO)', icon: Database },
@@ -44,18 +46,18 @@ export const TechnologyStack: React.FC<TechnologyStackProps> = ({ darkMode }) =>
           <h4 className={`text-xs font-mono font-bold uppercase tracking-wider ${
             darkMode ? 'text-purple-400' : 'text-purple-700'
           }`}>
-            TOOLS & TECHNOLOGIES
+            {t.skills.toolsTitle}
           </h4>
           <p className={`text-xs font-normal mt-0.5 ${
             darkMode ? 'text-slate-400' : 'text-slate-500'
           }`}>
-            Hệ thống công cụ chuyên ngành, nền tảng số hóa và công nghệ lập trình thực tế
+            {t.skills.toolsSubtitle}
           </p>
         </div>
         <span className={`text-[11px] font-mono px-2 py-0.5 rounded border self-start sm:self-auto ${
           darkMode ? 'bg-white/5 border-white/10 text-slate-400' : 'bg-slate-50 border-slate-200 text-slate-500'
         }`}>
-          {tools.length} Tools & Frameworks
+          {tools.length} {t.skills.toolsCount}
         </span>
       </div>
 

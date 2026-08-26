@@ -17,6 +17,12 @@ service cloud.firestore {
       allow read, update, delete: if isAdmin();
     }
 
+    // Visitor tracking logs: Clients can write/update their session; only admin can read, list or delete
+    match /visitor_logs/{logId} {
+      allow create, update: if true;
+      allow read, delete: if isAdmin();
+    }
+
     // Public read for portfolio settings and profile data, write strictly reserved for admin
     match /portfolio_settings/{docId} {
       allow read: if true;

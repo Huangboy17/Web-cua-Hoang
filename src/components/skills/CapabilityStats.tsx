@@ -1,6 +1,7 @@
 import React from 'react';
 import { Building2, Cpu, Table2, Sparkles } from 'lucide-react';
 import { SkillCategory } from '../../types';
+import { useLanguage } from '../../i18n/LanguageContext';
 
 interface CapabilityStatsProps {
   categories: SkillCategory[];
@@ -8,6 +9,7 @@ interface CapabilityStatsProps {
 }
 
 export const CapabilityStats: React.FC<CapabilityStatsProps> = ({ categories, darkMode }) => {
+  const { t } = useLanguage();
   const cat1 = categories?.[0];
   const cat2 = categories?.[1];
 
@@ -36,32 +38,32 @@ export const CapabilityStats: React.FC<CapabilityStatsProps> = ({ categories, da
     {
       id: 'kpi-construction',
       number: String(cat1Count).padStart(2, '0'),
-      label: 'Năng lực chuyên môn',
-      sublabel: 'KTXD, Chi phí & Hợp đồng',
+      label: t.skills.kpiConstruction,
+      sublabel: t.skills.kpiConstructionSub,
       icon: Building2,
       accent: 'from-purple-500/10 to-indigo-500/10 text-purple-600 dark:text-purple-400 border-purple-200 dark:border-purple-500/20'
     },
     {
       id: 'kpi-tech',
       number: String(cat2Count).padStart(2, '0'),
-      label: 'Năng lực công nghệ',
-      sublabel: 'AI & Digital Automation',
+      label: t.skills.kpiTech,
+      sublabel: t.skills.kpiTechSub,
       icon: Cpu,
       accent: 'from-blue-500/10 to-cyan-500/10 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-500/20'
     },
     {
       id: 'kpi-data',
       number: `${excelLevel}%`,
-      label: 'Data & Excel Nâng Cao',
-      sublabel: 'Power Query & Báo cáo số',
+      label: t.skills.kpiData,
+      sublabel: t.skills.kpiDataSub,
       icon: Table2,
       accent: 'from-emerald-500/10 to-teal-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/20'
     },
     {
       id: 'kpi-ai',
       number: `${aiLevel}%`,
-      label: 'AI & Automation',
-      sublabel: 'LLM, Gemini & Web Apps',
+      label: t.skills.kpiAi,
+      sublabel: t.skills.kpiAiSub,
       icon: Sparkles,
       accent: 'from-violet-500/10 to-fuchsia-500/10 text-violet-600 dark:text-violet-400 border-violet-200 dark:border-violet-500/20'
     }

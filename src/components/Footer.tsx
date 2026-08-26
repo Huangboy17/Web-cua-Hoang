@@ -1,6 +1,7 @@
 import React from 'react';
 import { ArrowUp, Layers, FileText } from 'lucide-react';
 import { UserProfile } from '../types';
+import { useLanguage } from '../i18n/LanguageContext';
 
 interface FooterProps {
   profile: UserProfile;
@@ -10,6 +11,8 @@ interface FooterProps {
 }
 
 export const Footer: React.FC<FooterProps> = ({ profile, darkMode, onOpenEditor, onOpenExportCV }) => {
+  const { t } = useLanguage();
+
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -43,23 +46,23 @@ export const Footer: React.FC<FooterProps> = ({ profile, darkMode, onOpenEditor,
 
           {/* Quick Links */}
           <div className="flex flex-wrap items-center justify-center gap-5 text-xs font-mono">
-            <a href="#bio" className={`transition-colors ${darkMode ? 'hover:text-[#A78BFA]' : 'hover:text-[#2563EB]'}`}>Giới Thiệu</a>
+            <a href="#bio" className={`transition-colors ${darkMode ? 'hover:text-[#A78BFA]' : 'hover:text-[#2563EB]'}`}>{t.nav.bio}</a>
             <a href="#projects" className="text-[#A78BFA] font-semibold hover:underline flex items-center gap-1">
-              <Layers className="w-3.5 h-3.5 text-[#7C3AED]" /> Web Apps (Live Demo)
+              <Layers className="w-3.5 h-3.5 text-[#7C3AED]" /> {t.nav.projects}
             </a>
-            <a href="#experience" className={`transition-colors ${darkMode ? 'hover:text-[#A78BFA]' : 'hover:text-[#2563EB]'}`}>Kinh Nghiệm</a>
-            <a href="#skills" className={`transition-colors ${darkMode ? 'hover:text-[#A78BFA]' : 'hover:text-[#2563EB]'}`}>Kỹ Năng</a>
+            <a href="#experience" className={`transition-colors ${darkMode ? 'hover:text-[#A78BFA]' : 'hover:text-[#2563EB]'}`}>{t.nav.experience}</a>
+            <a href="#skills" className={`transition-colors ${darkMode ? 'hover:text-[#A78BFA]' : 'hover:text-[#2563EB]'}`}>{t.nav.skills}</a>
             {onOpenExportCV && (
               <button 
                 onClick={onOpenExportCV} 
                 className="text-[#A78BFA] hover:text-white font-semibold flex items-center gap-1 hover:underline"
               >
-                <FileText className="w-3.5 h-3.5" /> Xuất CV (PDF)
+                <FileText className="w-3.5 h-3.5" /> {t.nav.exportCV}
               </button>
             )}
-            <a href="#contact" className={`transition-colors ${darkMode ? 'hover:text-[#A78BFA]' : 'hover:text-[#2563EB]'}`}>Liên Hệ</a>
+            <a href="#contact" className={`transition-colors ${darkMode ? 'hover:text-[#A78BFA]' : 'hover:text-[#2563EB]'}`}>{t.nav.contact}</a>
             <button onClick={onOpenEditor} className="text-[#2563EB] hover:text-[#7C3AED] hover:underline font-semibold">
-              ⚙️ Quản trị hồ sơ
+              ⚙️ {t.nav.admin}
             </button>
           </div>
 
@@ -69,17 +72,17 @@ export const Footer: React.FC<FooterProps> = ({ profile, darkMode, onOpenEditor,
             className={`px-4 py-2 rounded-full border flex items-center gap-2 text-xs uppercase tracking-wider font-mono transition-all ${
               darkMode ? 'bg-[#11131A] border-white/10 text-white/80 hover:text-white hover:border-[#7C3AED]' : 'bg-white border-[#E2E8F0] text-[#0F172A] hover:bg-slate-100 shadow-sm'
             }`}
-            title="Lên đầu trang"
+            title={t.footer.backToTop}
           >
-            <span>Đầu trang</span>
+            <span>{t.footer.backToTop}</span>
             <ArrowUp className="w-3.5 h-3.5 text-[#7C3AED]" />
           </button>
         </div>
 
         <div className="pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-[#94A3B8]/70 gap-3 font-mono">
-          <p>© {new Date().getFullYear()} {profile.fullName}. Tất cả quyền được bảo lưu.</p>
+          <p>© {new Date().getFullYear()} {profile.fullName}. {t.footer.allRights}</p>
           <p className="flex items-center gap-1">
-            Thiết kế tối ưu cho <strong className={darkMode ? 'text-[#A78BFA] font-sans' : 'text-[#2563EB] font-sans'}>Nhà Tuyển Dụng (Tech Recruiters)</strong>
+            {t.footer.designedFor} <strong className={darkMode ? 'text-[#A78BFA] font-sans' : 'text-[#2563EB] font-sans'}>{t.footer.recruiters}</strong>
           </p>
         </div>
       </div>

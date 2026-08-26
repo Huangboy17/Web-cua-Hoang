@@ -38,7 +38,7 @@ export interface WorkExperience {
   startDate?: string;
   endDate?: string;
   location: string;
-  type: 'Full-time' | 'Part-time' | 'Freelance' | 'Remote';
+  type: 'Full-time' | 'Part-time' | 'Freelance' | 'Remote' | string;
   summary: string;
   responsibilities?: string[];
   achievements: string[];
@@ -95,6 +95,50 @@ export interface ContactMessage {
   message: string;
   createdAt: string;
   status: 'unread' | 'read' | 'archived';
+}
+
+export interface VisitorEvent {
+  type: string;
+  details?: string;
+  timestamp: string;
+}
+
+export interface VisitorLog {
+  id: string;
+  visitorId: string;
+  sessionId: string;
+  timestamp: string;
+  ip?: string;
+  city?: string;
+  region?: string;
+  country?: string;
+  countryCode?: string;
+  isp?: string;
+  org?: string;
+  latitude?: number;
+  longitude?: number;
+  timezone?: string;
+  device: 'Desktop' | 'Mobile' | 'Tablet' | string;
+  browser: string;
+  browserVersion?: string;
+  os: string;
+  screenResolution: string;
+  windowSize?: string;
+  referrer: string;
+  language: string;
+  colorScheme?: 'dark' | 'light';
+  connectionType?: string;
+  pagePath?: string;
+  utmSource?: string;
+  utmMedium?: string;
+  utmCampaign?: string;
+  refTag?: string;
+  scrollDepth?: number;
+  durationSeconds: number;
+  events?: VisitorEvent[];
+  visitedProjects?: string[];
+  leadScore?: 'hot' | 'warm' | 'new' | 'casual';
+  lastActive: string;
 }
 
 export interface UserProfile {

@@ -10,6 +10,7 @@ import {
   FileText
 } from 'lucide-react';
 import { WorkExperience, EducationItem, CertificationItem } from '../types';
+import { useLanguage } from '../i18n/LanguageContext';
 
 interface ExperienceSectionProps {
   experiences: WorkExperience[];
@@ -18,6 +19,8 @@ interface ExperienceSectionProps {
   darkMode: boolean;
   isAdmin?: boolean;
   onOpenExportCV?: () => void;
+  activeTab?: 'work' | 'education' | 'certifications';
+  onTabChange?: (tab: 'work' | 'education' | 'certifications') => void;
 }
 
 export const ExperienceSection: React.FC<ExperienceSectionProps> = ({
@@ -26,9 +29,18 @@ export const ExperienceSection: React.FC<ExperienceSectionProps> = ({
   certifications,
   darkMode,
   isAdmin = false,
-  onOpenExportCV
+  onOpenExportCV,
+  activeTab: controlledTab,
+  onTabChange
 }) => {
-  const [activeTab, setActiveTab] = useState<'work' | 'education' | 'certifications'>('work');
+  const { t } = useLanguage();
+  const [internalTab, setInternalTab] = useState<'work' | 'education' | 'certifications'>('work');
+
+  const activeTab = controlledTab !== undefined ? controlledTab : internalTab;
+  const setActiveTab = (tab: 'work' | 'education' | 'certifications') => {
+    if (onTabChange) onTabChange(tab);
+    setInternalTab(tab);
+  };
 
   const visibleExperiences = experiences.filter(exp => isAdmin || exp.published !== false);
 
@@ -49,15 +61,15 @@ export const ExperienceSection: React.FC<ExperienceSectionProps> = ({
               : 'bg-purple-50 text-[#7C3AED] border-purple-200'
           }`}>
             <Briefcase className="w-4 h-4 text-[#A78BFA]" />
-            <span className="uppercase tracking-[0.2em]">Hành Trình Nghề Nghiệp</span>
+            <span className="uppercase tracking-[0.2em]">{t.experience.badge}</span>
           </div>
 
           <h2 className="text-3xl sm:text-5xl font-bold tracking-tight mb-4">
-            Kinh Nghiệm & <span className="text-gradient-tech">Năng Lực Thực Chiến</span>
+            {t.experience.title} <span className="text-gradient-tech">{t.experience.titleHighlight}</span>
           </h2>
 
           <p className={`text-sm sm:text-base leading-relaxed font-normal ${darkMode ? 'text-[#94A3B8]' : 'text-[#64748B]'}`}>
-            6 năm cống hiến tại các Chủ đầu tư & Tổng công ty lớn trong quản lý chi phí, ngân sách, TMĐT và tiên phong ứng dụng AI tự động hóa.
+            {t.experience.subtitle}
           </p>
 
           {/* Tab Switcher */}
@@ -75,7 +87,7 @@ export const ExperienceSection: React.FC<ExperienceSectionProps> = ({
               }`}
             >
               <Briefcase className="w-3.5 h-3.5" />
-              <span>Chủ Đầu Tư & Doanh Nghiệp ({experiences.length})</span>
+              <span>{t.experience.tabWork} ({experiences.length})</span>
             </button>
 
             <button
@@ -89,7 +101,7 @@ export const ExperienceSection: React.FC<ExperienceSectionProps> = ({
               }`}
             >
               <GraduationCap className="w-3.5 h-3.5" />
-              <span>Học Vấn & Bằng Cấp</span>
+              <span>{t.experience.tabEducation}</span>
             </button>
 
             <button
@@ -103,7 +115,7 @@ export const ExperienceSection: React.FC<ExperienceSectionProps> = ({
               }`}
             >
               <ShieldCheck className="w-3.5 h-3.5" />
-              <span>Chứng Chỉ Hành Nghề</span>
+              <span>{t.experience.tabCertifications}</span>
             </button>
           </div>
 
@@ -117,10 +129,10 @@ export const ExperienceSection: React.FC<ExperienceSectionProps> = ({
                     ? 'bg-white/5 hover:bg-white/10 text-[#A78BFA] hover:text-white border-white/10 hover:border-[#7C3AED]/50' 
                     : 'bg-white hover:bg-slate-100 text-[#7C3AED] border-slate-200 shadow-sm'
                 }`}
-                title="Xuất bản in / PDF toàn bộ kinh nghiệm và học vấn"
+                title={t.exportCV.title}
               >
                 <FileText className="w-3.5 h-3.5 text-[#7C3AED]" />
-                <span>Xuất Hồ Sơ CV Đầy Đủ (PDF)</span>
+                <span>{t.experience.exportCV}</span>
               </button>
             </div>
           )}
@@ -161,7 +173,7 @@ export const ExperienceSection: React.FC<ExperienceSectionProps> = ({
                           <div>
                             {exp.published === false && (
                               <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-500/20 text-amber-300 border border-amber-500/40 mr-2 mb-2">
-                                Bản nháp
+                                {t.experience.draftBadge}
                               </span>
                             )}
                             <span className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border mb-2 ${
@@ -205,7 +217,7 @@ export const ExperienceSection: React.FC<ExperienceSectionProps> = ({
                         {exp.achievements && exp.achievements.length > 0 && (
                           <div className="mb-4 space-y-2">
                             <h4 className="text-xs font-semibold uppercase tracking-[0.2em] text-[#A78BFA] font-mono">
-                              Nhiệm vụ & Trọng trách chính:
+                              {t.experience.tasksTitle}
                             </h4>
                             <ul className="space-y-1.5">
                               {exp.achievements.map((ach, aIdx) => (
@@ -273,7 +285,7 @@ export const ExperienceSection: React.FC<ExperienceSectionProps> = ({
 
                 <div className="mt-4 pt-4 border-t border-white/10">
                   <p className="text-xs uppercase tracking-[0.2em] font-mono font-semibold text-[#A78BFA] mb-1">
-                    Chuyên ngành: {edu.major}
+                    {t.experience.majorLabel} {edu.major}
                   </p>
                   {edu.description && (
                     <p className={`text-sm leading-relaxed ${darkMode ? 'text-[#94A3B8]' : 'text-[#475569]'}`}>
@@ -292,7 +304,7 @@ export const ExperienceSection: React.FC<ExperienceSectionProps> = ({
             <div>
               <div className="flex items-center gap-2 mb-6">
                 <ShieldCheck className="w-5 h-5 text-[#7C3AED]" />
-                <h3 className={`text-xl font-bold ${darkMode ? 'text-[#F8FAFC]' : 'text-[#0F172A]'}`}>Chứng Chỉ Hành Nghề Chuyên Môn</h3>
+                <h3 className={`text-xl font-bold ${darkMode ? 'text-[#F8FAFC]' : 'text-[#0F172A]'}`}>{t.experience.certTitle}</h3>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -311,9 +323,9 @@ export const ExperienceSection: React.FC<ExperienceSectionProps> = ({
                         {cert.issueDate}
                       </span>
                     </div>
-                    <p className={`text-xs mb-3 ${darkMode ? 'text-[#94A3B8]' : 'text-[#64748B]'}`}>Đơn vị cấp: <strong className={darkMode ? 'text-white' : 'text-[#0F172A]'}>{cert.issuer}</strong></p>
+                    <p className={`text-xs mb-3 ${darkMode ? 'text-[#94A3B8]' : 'text-[#64748B]'}`}>{t.experience.issuerLabel} <strong className={darkMode ? 'text-white' : 'text-[#0F172A]'}>{cert.issuer}</strong></p>
                     {cert.credentialId && (
-                      <p className="text-[11px] font-mono text-[#94A3B8]">Mã hiệu / ID: {cert.credentialId}</p>
+                      <p className="text-[11px] font-mono text-[#94A3B8]">{t.experience.credentialIdLabel} {cert.credentialId}</p>
                     )}
                   </div>
                 ))}

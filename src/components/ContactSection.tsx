@@ -15,6 +15,8 @@ import {
 } from 'lucide-react';
 import { UserProfile } from '../types';
 import { submitContactMessage } from '../firebase';
+import { useLanguage } from '../i18n/LanguageContext';
+import { trackEvent } from '../services/analytics';
 
 interface ContactSectionProps {
   profile: UserProfile;
@@ -22,6 +24,7 @@ interface ContactSectionProps {
 }
 
 export const ContactSection: React.FC<ContactSectionProps> = ({ profile, darkMode }) => {
+  const { t } = useLanguage();
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     recruiterName: '',
@@ -54,18 +57,19 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ profile, darkMod
         message: formData.message,
       });
       setSavedToCloud(true);
+      trackEvent('submit_contact', `Gửi liên hệ từ: ${formData.recruiterName} (${formData.company || formData.email})`);
     } catch (err) {
       console.warn('Firestore contact message submission note:', err);
     }
 
     // 2. Open mail client as backup
-    const subject = encodeURIComponent(`[Liên Hệ] Trao đổi công việc ${formData.roleTitle ? `- Vị trí/Dự án: ${formData.roleTitle}` : ''} từ ${formData.company || 'Đối tác'}`);
+    const subject = encodeURIComponent(`[Contact] ${formData.roleTitle ? `- Role/Project: ${formData.roleTitle}` : ''} from ${formData.company || 'Partner'}`);
     const body = encodeURIComponent(
-      `Chào ${profile.fullName},\n\nTôi là ${formData.recruiterName} đại diện từ ${formData.company}.\n` +
-      `Email liên hệ: ${formData.email}\n` +
-      `Chủ đề / Vị trí trao đổi: ${formData.roleTitle}\n\n` +
-      `Nội dung tin nhắn:\n${formData.message}\n\n` +
-      `Rất mong sớm nhận được phản hồi từ bạn.`
+      `Hello ${profile.fullName},\n\nI am ${formData.recruiterName} representing ${formData.company}.\n` +
+      `Contact Email: ${formData.email}\n` +
+      `Topic / Role: ${formData.roleTitle}\n\n` +
+      `Message:\n${formData.message}\n\n` +
+      `Looking forward to hearing from you.`
     );
     
     // Slight timeout so UI feedback is instant
@@ -93,15 +97,15 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ profile, darkMod
               : 'bg-purple-50 text-[#7C3AED] border-purple-200'
           }`}>
             <Send className="w-4 h-4 text-[#A78BFA]" />
-            <span className="uppercase tracking-[0.2em]">Liên Hệ Trực Tiếp</span>
+            <span className="uppercase tracking-[0.2em]">{t.contact.badge}</span>
           </div>
 
           <h2 className="text-3xl sm:text-5xl font-bold tracking-tight mb-4">
-            Liên Hệ & <span className="text-gradient-tech">Hợp Tác</span>
+            {t.contact.title} <span className="text-gradient-tech">{t.contact.titleHighlight}</span>
           </h2>
 
           <p className={`text-sm sm:text-base leading-relaxed font-normal ${darkMode ? 'text-[#94A3B8]' : 'text-[#64748B]'}`}>
-            Tôi luôn sẵn sàng trao đổi về các cơ hội hợp tác, dự án Quản lý Chi phí - Hợp đồng hoặc phát triển ứng dụng Tự động hóa & AI. Bạn có thể liên hệ nhanh qua các kênh dưới đây!
+            {t.contact.subtitle}
           </p>
         </div>
 
@@ -120,7 +124,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ profile, darkMod
                     <Mail className="w-5 h-5" />
                   </div>
                   <div>
-                    <p className="text-xs uppercase tracking-[0.2em] font-mono font-semibold text-[#A78BFA]">Email chính thức</p>
+                    <p className="text-xs uppercase tracking-[0.2em] font-mono font-semibold text-[#A78BFA]">{t.contact.emailOfficial}</p>
                     <p className={`font-mono text-base font-semibold break-all ${darkMode ? 'text-white' : 'text-[#0F172A]'}`}>{profile.email}</p>
                   </div>
                 </div>
@@ -128,24 +132,24 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ profile, darkMod
 
               <div className="flex items-center gap-2 mt-4 pt-3 border-t border-white/10">
                 <a
-                  href={`mailto:${profile.email}?subject=[Liên Hệ] Trao đổi công việc & hợp tác`}
+                  href={`mailto:${profile.email}?subject=[Contact] Opportunity & Collaboration`}
                   className="flex-1 text-center py-2 px-4 rounded-full text-xs uppercase tracking-wider font-semibold bg-gradient-to-r from-[#7C3AED] to-[#2563EB] hover:from-[#6D28D9] hover:to-[#1D4ED8] text-white transition-all shadow-md shadow-purple-500/20"
                 >
-                  Gửi Email Ngay
+                  {t.contact.sendEmailNow}
                 </a>
                 <button
                   onClick={() => handleCopy(profile.email, 'email')}
                   className={`p-2 px-3.5 rounded-full border text-xs font-semibold flex items-center gap-1.5 transition-all ${
                     darkMode ? 'bg-[#08090D] hover:bg-white/5 text-[#F8FAFC] border-white/10' : 'bg-slate-100 hover:bg-slate-200 text-[#0F172A] border-[#E2E8F0]'
                   }`}
-                  title="Sao chép email"
+                  title={t.hero.copyEmail}
                 >
                   {copiedField === 'email' ? (
                     <CheckCircle2 className="w-4 h-4 text-emerald-400" />
                   ) : (
                     <Copy className="w-4 h-4 text-[#7C3AED]" />
                   )}
-                  <span>{copiedField === 'email' ? 'Đã chép' : 'Sao chép'}</span>
+                  <span>{copiedField === 'email' ? t.contact.copied : t.contact.copy}</span>
                 </button>
               </div>
             </div>
@@ -160,7 +164,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ profile, darkMod
                     <Phone className="w-5 h-5" />
                   </div>
                   <div>
-                    <p className="text-xs uppercase tracking-[0.2em] font-mono font-semibold text-[#2563EB]">Điện thoại / Zalo</p>
+                    <p className="text-xs uppercase tracking-[0.2em] font-mono font-semibold text-[#2563EB]">{t.contact.phoneZalo}</p>
                     <p className={`font-mono text-base font-semibold ${darkMode ? 'text-white' : 'text-[#0F172A]'}`}>{profile.phone}</p>
                   </div>
                 </div>
@@ -171,21 +175,21 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ profile, darkMod
                   href={`tel:${profile.phone.replace(/\s+/g, '')}`}
                   className="flex-1 text-center py-2 px-4 rounded-full text-xs uppercase tracking-wider font-semibold bg-gradient-to-r from-[#2563EB] to-[#7C3AED] hover:from-[#1D4ED8] hover:to-[#6D28D9] text-white transition-all shadow-md shadow-blue-500/20"
                 >
-                  Gọi Trực Tiếp
+                  {t.contact.callDirect}
                 </a>
                 <button
                   onClick={() => handleCopy(profile.phone, 'phone')}
                   className={`p-2 px-3.5 rounded-full border text-xs font-semibold flex items-center gap-1.5 transition-all ${
                     darkMode ? 'bg-[#08090D] hover:bg-white/5 text-[#F8FAFC] border-white/10' : 'bg-slate-100 hover:bg-slate-200 text-[#0F172A] border-[#E2E8F0]'
                   }`}
-                  title="Sao chép số điện thoại"
+                  title={t.hero.copyPhone}
                 >
                   {copiedField === 'phone' ? (
                     <CheckCircle2 className="w-4 h-4 text-emerald-400" />
                   ) : (
                     <Copy className="w-4 h-4 text-[#2563EB]" />
                   )}
-                  <span>{copiedField === 'phone' ? 'Đã chép' : 'Sao chép'}</span>
+                  <span>{copiedField === 'phone' ? t.contact.copied : t.contact.copy}</span>
                 </button>
               </div>
             </div>
@@ -200,7 +204,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ profile, darkMod
               </div>
               <div className="flex items-center gap-2 font-mono">
                 <Sparkles className="w-4 h-4 text-[#7C3AED] shrink-0" />
-                <span>Khu vực làm việc: <strong className={darkMode ? 'text-white' : 'text-[#0F172A]'}>Hà Nội / Toàn quốc (Hybrid & Remote)</strong></span>
+                <span>{t.contact.workArea}: <strong className={darkMode ? 'text-white' : 'text-[#0F172A]'}>Hanoi / Nationwide (Hybrid & Remote)</strong></span>
               </div>
             </div>
 
@@ -213,19 +217,19 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ profile, darkMod
             }`}>
               <h3 className={`text-xl font-bold mb-2 flex items-center gap-2 ${darkMode ? 'text-[#F8FAFC]' : 'text-[#0F172A]'}`}>
                 <MessageSquare className="w-5 h-5 text-[#A78BFA]" />
-                <span>Gửi Lời Nhắn Trực Tiếp</span>
+                <span>{t.contact.formTitle}</span>
               </h3>
               <p className={`text-xs sm:text-sm mb-6 ${darkMode ? 'text-[#94A3B8]' : 'text-[#64748B]'}`}>
-                Lời nhắn của bạn sẽ được lưu trực tiếp vào hộp thư Google Cloud và gửi email thông báo tới Bùi Việt Hoàng.
+                {t.contact.formSubtitle}
               </p>
 
               {submitted && (
                 <div className="p-4 mb-6 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs sm:text-sm flex items-start gap-2.5 animate-fadeIn">
                   <CheckCircle2 className="w-5 h-5 shrink-0 text-emerald-400 mt-0.5" />
                   <div>
-                    <p className="font-semibold text-emerald-400">Đã gửi tin nhắn thành công!</p>
+                    <p className="font-semibold text-emerald-400">{t.contact.sentSuccess}</p>
                     <p className="text-xs opacity-90 mt-0.5">
-                      Cảm ơn bạn đã để lại thông tin liên hệ. Tôi sẽ phản hồi lại bạn trong thời gian sớm nhất.
+                      {t.contact.sentSuccessSub}
                     </p>
                   </div>
                 </div>
@@ -237,14 +241,14 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ profile, darkMod
                     <label className={`block text-xs uppercase tracking-wider font-mono font-semibold mb-1.5 ${
                       darkMode ? 'text-[#94A3B8]' : 'text-[#475569]'
                     }`}>
-                      Họ và Tên / Người liên hệ *
+                      {t.contact.fieldName} *
                     </label>
                     <input
                       required
                       type="text"
                       value={formData.recruiterName}
                       onChange={(e) => setFormData({ ...formData, recruiterName: e.target.value })}
-                      placeholder="Ví dụ: Nguyễn Văn A"
+                      placeholder="e.g. John Doe / Nguyễn Văn A"
                       className={`w-full px-4 py-2.5 rounded-2xl text-xs sm:text-sm border focus:outline-none transition-all ${
                         darkMode ? 'bg-[#08090D] border-white/10 text-white placeholder-[#94A3B8]/50 focus:border-[#7C3AED]' : 'bg-white border-[#E2E8F0] text-[#0F172A] focus:border-[#2563EB]'
                       }`}
@@ -255,13 +259,13 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ profile, darkMod
                     <label className={`block text-xs uppercase tracking-wider font-mono font-semibold mb-1.5 ${
                       darkMode ? 'text-[#94A3B8]' : 'text-[#475569]'
                     }`}>
-                      Công Ty / Đơn Vị Công Tác
+                      {t.contact.fieldCompany}
                     </label>
                     <input
                       type="text"
                       value={formData.company}
                       onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-                      placeholder="Ví dụ: Tên công ty / Tổ chức / Cá nhân"
+                      placeholder="e.g. Company Name / Enterprise"
                       className={`w-full px-4 py-2.5 rounded-2xl text-xs sm:text-sm border focus:outline-none transition-all ${
                         darkMode ? 'bg-[#08090D] border-white/10 text-white placeholder-[#94A3B8]/50 focus:border-[#7C3AED]' : 'bg-white border-[#E2E8F0] text-[#0F172A] focus:border-[#2563EB]'
                       }`}
@@ -274,7 +278,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ profile, darkMod
                     <label className={`block text-xs uppercase tracking-wider font-mono font-semibold mb-1.5 ${
                       darkMode ? 'text-[#94A3B8]' : 'text-[#475569]'
                     }`}>
-                      Email Của Bạn *
+                      {t.contact.fieldEmail} *
                     </label>
                     <input
                       required
@@ -292,13 +296,13 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ profile, darkMod
                     <label className={`block text-xs uppercase tracking-wider font-mono font-semibold mb-1.5 ${
                       darkMode ? 'text-[#94A3B8]' : 'text-[#475569]'
                     }`}>
-                      Chủ Đề / Vị Trí Trao Đổi
+                      {t.contact.fieldTopic}
                     </label>
                     <input
                       type="text"
                       value={formData.roleTitle}
                       onChange={(e) => setFormData({ ...formData, roleTitle: e.target.value })}
-                      placeholder="Ví dụ: Hợp tác dự án / Trao đổi công việc..."
+                      placeholder="e.g. Collaboration / Job Opportunity..."
                       className={`w-full px-4 py-2.5 rounded-2xl text-xs sm:text-sm border focus:outline-none transition-all ${
                         darkMode ? 'bg-[#08090D] border-white/10 text-white placeholder-[#94A3B8]/50 focus:border-[#7C3AED]' : 'bg-white border-[#E2E8F0] text-[#0F172A] focus:border-[#2563EB]'
                       }`}
@@ -310,14 +314,14 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ profile, darkMod
                   <label className={`block text-xs uppercase tracking-wider font-mono font-semibold mb-1.5 ${
                     darkMode ? 'text-[#94A3B8]' : 'text-[#475569]'
                   }`}>
-                    Nội dung trao đổi / Lời nhắn *
+                    {t.contact.fieldMessage} *
                   </label>
                   <textarea
                     required
                     rows={4}
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                    placeholder="Nhập nội dung bạn muốn trao đổi hoặc hợp tác..."
+                    placeholder={t.contact.placeholderMessage}
                     className={`w-full px-4 py-2.5 rounded-2xl text-xs sm:text-sm border focus:outline-none transition-all ${
                       darkMode ? 'bg-[#08090D] border-white/10 text-white placeholder-[#94A3B8]/50 focus:border-[#7C3AED]' : 'bg-white border-[#E2E8F0] text-[#0F172A] focus:border-[#2563EB]'
                     }`}
@@ -333,12 +337,12 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ profile, darkMod
                   {isSubmitting ? (
                     <>
                       <Loader2 className="w-4 h-4 animate-spin" />
-                      <span>Đang Gửi Lời Nhắn...</span>
+                      <span>{t.contact.sending}</span>
                     </>
                   ) : (
                     <>
                       <Send className="w-4 h-4" />
-                      <span>Gửi Lời Nhắn Đến {profile.fullName}</span>
+                      <span>{t.contact.btnSubmit} {profile.fullName}</span>
                     </>
                   )}
                 </button>

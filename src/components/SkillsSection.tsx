@@ -5,11 +5,10 @@ import {
   Layers, 
   Sparkles, 
   Code2, 
-  Database, 
-  Calculator, 
-  Workflow 
+  Database
 } from 'lucide-react';
 import { SkillCategory } from '../types';
+import { useLanguage } from '../i18n/LanguageContext';
 import { SkillsHero } from './skills/SkillsHero';
 import { CapabilityStats } from './skills/CapabilityStats';
 import { CapabilityCard } from './skills/CapabilityCard';
@@ -22,10 +21,12 @@ interface SkillsSectionProps {
 }
 
 export const SkillsSection: React.FC<SkillsSectionProps> = ({ categories, darkMode }) => {
+  const { t } = useLanguage();
+
   const getCategoryIcon = (name: string = '') => {
     const safeName = (name || '').toLowerCase();
-    if (safeName.includes('kinh tế') || safeName.includes('dự toán') || safeName.includes('chi phí')) return Building2;
-    if (safeName.includes('ai') || safeName.includes('tự động') || safeName.includes('công nghệ')) return Sparkles;
+    if (safeName.includes('kinh tế') || safeName.includes('dự toán') || safeName.includes('chi phí') || safeName.includes('cost') || safeName.includes('economic') || safeName.includes('造价') || safeName.includes('원가')) return Building2;
+    if (safeName.includes('ai') || safeName.includes('tự động') || safeName.includes('công nghệ') || safeName.includes('automation') || safeName.includes('自动化') || safeName.includes('자동화')) return Sparkles;
     if (safeName.includes('frontend') || safeName.includes('web') || safeName.includes('dev')) return Code2;
     if (safeName.includes('database') || safeName.includes('cloud') || safeName.includes('dữ liệu')) return Database;
     return Layers;
@@ -52,19 +53,19 @@ export const SkillsSection: React.FC<SkillsSectionProps> = ({ categories, darkMo
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 mb-10">
           {safeCategories.map((cat, idx) => {
             const catName = cat.categoryName || `Danh mục ${idx + 1}`;
-            const isConstruction = idx === 0 || catName.toLowerCase().includes('kinh tế') || catName.toLowerCase().includes('chi phí');
+            const isConstruction = idx === 0 || catName.toLowerCase().includes('kinh tế') || catName.toLowerCase().includes('chi phí') || catName.toLowerCase().includes('cost');
             
             const number = String(idx + 1).padStart(2, '0');
             const title = isConstruction 
-              ? 'KINH TẾ XÂY DỰNG & QUẢN LÝ CHI PHÍ' 
-              : (idx === 1 ? 'AI & DIGITAL AUTOMATION' : catName.toUpperCase());
+              ? t.skills.card1Title 
+              : (idx === 1 ? t.skills.card2Title : catName.toUpperCase());
             const subtitle = isConstruction
-              ? 'Nền tảng chuyên môn cốt lõi'
-              : (idx === 1 ? 'Công nghệ hỗ trợ tự động hóa công việc' : 'Năng lực mở rộng & công nghệ bổ trợ');
+              ? t.skills.card1Subtitle
+              : (idx === 1 ? t.skills.card2Subtitle : (cat.categoryName || ''));
             
             const countLabel = isConstruction
-              ? `${String(cat.skills?.length || 0).padStart(2, '0')} NĂNG LỰC CỐT LÕI`
-              : `${String(cat.skills?.length || 0).padStart(2, '0')} NĂNG LỰC CÔNG NGHỆ`;
+              ? `${String(cat.skills?.length || 0).padStart(2, '0')} ${t.skills.card1Count.replace(/^\d+\s*/, '')}`
+              : `${String(cat.skills?.length || 0).padStart(2, '0')} ${t.skills.card2Count.replace(/^\d+\s*/, '')}`;
 
             const icon = getCategoryIcon(catName);
 
